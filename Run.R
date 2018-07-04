@@ -6,6 +6,7 @@ if (.Platform$OS.type == "unix") {
   setwd("C:/Users/Hanne/Documents/NMBU/Masteroppgave/msis_project") 
 }
 
+#test test
 # LOADS IN ALL R SCRIPTS THAT ARE LOCATED IN THE "code" folder
 fileSources = file.path("C:/Users/Hanne/Documents/NMBU/Masteroppgave/msis_project/code_msis_project/code", list.files("code_msis_project/code", pattern = "*.[rR]$"))
 sapply(fileSources, source, .GlobalEnv)
