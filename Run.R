@@ -71,6 +71,8 @@ fullData[,outbreak:=num>threshold]
 # HANNE: MAYBE SMART TO RENAME SOME VARIABLES???
 # THIS WAY WE CAN LABEL MSIS VARIABLES WITH THE PREFIX msis_
 setnames(fullData,"outbreak","msis_outbreak")
+setnames(fullData,"threshold","msis_threshold")
+setnames(fullData,"last5yrAverage","msis_last5yrAverage")
 
 ### SYKDOMSPULSEN DATA
 
@@ -86,7 +88,8 @@ s <- rbind(s1,s2,s3,s4)[age=="Totalt"]
 # THIS WAY WE CAN LABEL SYKDOMSPULSEN VARIABLES WITH THE PREFIX s_
 setnames(s,"status","s_status")
 
-# remove s1, s2, s3, s4 from the RAM of the computer, because they are big and we don't have that much space
+
+# remove s1, s2, s3, s4, from the RAM of the computer, because they are big and we don't have that much space
 rm("s1")
 rm("s2")
 rm("s3")
