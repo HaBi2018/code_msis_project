@@ -3,11 +3,11 @@ if (.Platform$OS.type == "unix") {
   setwd("/docs/help/msis_project")
 } else {
   # if NOT unix machine (i.e. Hanne)
-  
+  setwd("C:/Users/Hanne/Documents/NMBU/Masteroppgave/msis_project") 
 }
 
 # LOADS IN ALL R SCRIPTS THAT ARE LOCATED IN THE "code" folder
-fileSources = file.path("code_msis_project/code", list.files("code_msis_project/code", pattern = "*.[rR]$"))
+fileSources = file.path("C:/Users/Hanne/Documents/NMBU/Masteroppgave/msis_project/code_msis_project/code", list.files("code_msis_project/code", pattern = "*.[rR]$"))
 sapply(fileSources, source, .GlobalEnv)
 
 library(data.table)
@@ -28,7 +28,7 @@ bokommToKommuneNr[,Opphevet:=NULL]
 # read in the raw data
 data <- data.table(readxl::read_excel("data_raw/MSIS_07_17_komm_aar_uke_excel.xlsx"))
 # change "år" to "ar" (never use norwegian characters!!!)
-setnames(data,"år","ar")
+# setnames(data,"år","ar") HAR ENDRET TIL AR I EXCEL
 
 # give each datapoint a "kommunenummer"
 nrow(data) # number of rows in the dataset before merging
