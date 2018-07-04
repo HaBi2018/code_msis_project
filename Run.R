@@ -17,25 +17,10 @@ library(data.table)
 # read in a "merging" dataset that says "which kommune goes to a different kommune"
 mergingData <- GenNorwayMunicipMerging()
 
-# now we need to convert "Bokommune" to "municip" (i.e. kommunenummer)
-bokommToKommuneNr <- data.table(readxl::read_excel("code_msis_project/structural_data/Kommunenummer_STUDIEN434.xlsx"))
-# make a "municip" variable so that it is the same as in "mergingData"
-bokommToKommuneNr[,municip:=sprintf("municip%s",Kommunenr)]
-# delete useless variables
-bokommToKommuneNr[,Komm:=NULL]
-bokommToKommuneNr[,Kommunenr:=NULL]
-bokommToKommuneNr[,Opprettet:=NULL]
-bokommToKommuneNr[,Opphevet:=NULL]
-
 # read in the raw data
 data <- data.table(readxl::read_excel("data_raw/msis_07_17.xlsx"))
-# change "år" to "ar" (never use norwegian characters!!!)
-# setnames(data,"år","ar") HAR ENDRET TIL AR I EXCEL
-
-# give each datapoint a "kommunenummer"
-nrow(data) # number of rows in the dataset before merging
-data <- merge(data,bokommToKommuneNr,by.x="Bokomm",by.y="Kommunenavn")
-nrow(data) # number of rows in the dataset after merging -- ARE THESE THE SAME?????
+# make a "municip" variable so that it is the same as in "mergingData"
+data[,municip:=sprintf("municip%s",KommuneNr)]
 
 # merge in the dataset that says "kommune X -> kommune Y"
 nrow(data) # number of rows in the dataset before merging
