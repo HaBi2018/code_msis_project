@@ -48,17 +48,17 @@ data[,Bokomm:=NULL]
 
 setnames(data,"municipEnd","municip")
 
-data <- data[,.(num=.N),by=.(Diag,municip,ar,uke)]
+data <- data[,.(num=.N),by=.(municip,ar,uke)]
 
 skeleton <- data.table(expand.grid(
-  Diag=unique(data$Diag),
+ 
   municip=unique(data$municip),
   ar=2007:2017,
   uke=1:52
     ))
 
-fullData <- merge(skeleton,data,by=c("Diag","municip","ar","uke"),all.x=T)
-fullData[is.na(N),N:=0]
+fullData <- merge(skeleton,data,by=c("municip","ar","uke"),all.x=T)
+fullData[is.na(num),num:=0]
 
 ########################################################
 ##
