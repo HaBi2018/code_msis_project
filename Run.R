@@ -22,6 +22,11 @@ data <- data.table(readxl::read_excel("data_raw/msis_07_17.xlsx"))
 # make a "municip" variable so that it is the same as in "mergingData"
 data[,municip:=sprintf("municip%s",KommuneNr)]
 
+# find out who is missing
+data2 <- merge(data,mergingData,by.x=c("municip","ar"),by.y=c("municip","year"),all.x=T)
+data2[is.na(municipEnd)]
+#end
+
 # merge in the dataset that says "kommune X -> kommune Y"
 nrow(data) # number of rows in the dataset before merging
 data <- merge(data,mergingData,by.x=c("municip","ar"),by.y=c("municip","year"))
