@@ -27,7 +27,7 @@ bokommToKommuneNr[,Opprettet:=NULL]
 bokommToKommuneNr[,Opphevet:=NULL]
 
 # read in the raw data
-data <- data.table(readxl::read_excel("data_raw/MSIS_07_17_komm_aar_uke_excel.xlsx"))
+data <- data.table(readxl::read_excel("data_raw/msis_07_17.xlsx"))
 # change "år" to "ar" (never use norwegian characters!!!)
 # setnames(data,"år","ar") HAR ENDRET TIL AR I EXCEL
 
