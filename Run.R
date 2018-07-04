@@ -1,14 +1,15 @@
 if (.Platform$OS.type == "unix") {
   # if unix machine (i.e. Richard)
   setwd("/docs/help/msis_project")
+  fileSources = file.path("code_msis_project/code", list.files("code_msis_project/code", pattern = "*.[rR]$"))
 } else {
   # if NOT unix machine (i.e. Hanne)
   setwd("C:/Users/Hanne/Documents/NMBU/Masteroppgave/msis_project") 
+  fileSources = file.path("C:/Users/Hanne/Documents/NMBU/Masteroppgave/msis_project/code_msis_project/code", list.files("code_msis_project/code", pattern = "*.[rR]$"))
 }
 
 #test test
 # LOADS IN ALL R SCRIPTS THAT ARE LOCATED IN THE "code" folder
-fileSources = file.path("C:/Users/Hanne/Documents/NMBU/Masteroppgave/msis_project/code_msis_project/code", list.files("code_msis_project/code", pattern = "*.[rR]$"))
 sapply(fileSources, source, .GlobalEnv)
 
 library(data.table)
@@ -46,6 +47,18 @@ data[,municip:=NULL]
 data[,Bokomm:=NULL]
 
 setnames(data,"municipEnd","municip")
+
+data <- data[,.(num=.N),by=.(Diag,municip,ar,uke)]
+
+skeleton <- data.table(expand.grid(
+  Diag=unique(data$Diag),
+  municip=unique(data$municip),
+  ar=2007:2017,
+  uke=1:52
+    ))
+
+fullData <- merge(skeleton,data,by=c("Diag","municip","ar","uke"),all.x=T)
+fullData[is.na(N),N:=0]
 
 ########################################################
 ##
