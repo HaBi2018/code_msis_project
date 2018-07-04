@@ -74,21 +74,23 @@ setnames(fullData,"outbreak","msis_outbreak")
 
 ### SYKDOMSPULSEN DATA
 
-s1 <- data.table(read.table("data_raw/Utbruddsdata_20180419_2010_2012.txt"))
-s2 <- data.table(read.table("data_raw/Utbruddsdata_20180419_2013_2015.txt"))
-s3 <- data.table(read.table("data_raw/Utbruddsdata_20180419_2016_2017.txt"))
+s1 <- data.table(read.table("data_raw/Utbruddsdata_20180419_2007_2009.txt"))
+s2 <- data.table(read.table("data_raw/Utbruddsdata_20180419_2010_2012.txt"))
+s3 <- data.table(read.table("data_raw/Utbruddsdata_20180419_2013_2015.txt"))
+s4 <- data.table(read.table("data_raw/Utbruddsdata_20180419_2016_2017.txt"))
 
 # MAKE SURE WE ONLY USE "ALL AGES" -- NO NEED FOR THE SEPARATE AGE GROUPS
-s <- rbind(s1,s2,s3)[age=="Totalt"]
+s <- rbind(s1,s2,s3,s4)[age=="Totalt"]
 
 # HANNE: MAYBE SMART TO RENAME SOME VARIABLES???
 # THIS WAY WE CAN LABEL SYKDOMSPULSEN VARIABLES WITH THE PREFIX s_
 setnames(s,"status","s_status")
 
-# remove s1, s2, s3 from the RAM of the computer, because they are big and we don't have that much space
+# remove s1, s2, s3, s4 from the RAM of the computer, because they are big and we don't have that much space
 rm("s1")
 rm("s2")
 rm("s3")
+rm("s4")
 
 nrow(s)
 mergedData <- merge(s, fullData,
