@@ -72,6 +72,10 @@ fullData[,last5yrAverage:=(num1+num2+num3+num4+num5)/5]
 fullData[municip=="municip0301" & uke==3]
 fullData[municip=="municip5054" & uke==30]
 
+# create the thresholds
+fullData[,threshold:=qpois(p=0.95,lambda=last5yrAverage)]
+fullData[,outbreak:=num>threshold]
+
 ########################################################
 ##
 ##        Opprette fiktiv tabell som inneholder alle kommuner, ?r og uker
