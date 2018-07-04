@@ -44,7 +44,6 @@ setnames(data,"municipEnd","municip")
 data <- data[,.(num=.N),by=.(municip,ar,uke)]
 
 skeleton <- data.table(expand.grid(
- 
   municip=unique(data$municip),
   ar=2007:2017,
   uke=1:52
@@ -68,6 +67,34 @@ fullData[municip=="municip5054" & uke==30]
 # create the thresholds
 fullData[,threshold:=qpois(p=0.95,lambda=last5yrAverage)]
 fullData[,outbreak:=num>threshold]
+
+# HANNE: MAYBE SMART TO RENAME SOME VARIABLES???
+# THIS WAY WE CAN LABEL MSIS VARIABLES WITH THE PREFIX msis_
+setnames(fullData,"outbreak","msis_outbreak")
+
+### SYKDOMSPULSEN DATA
+
+s1 <- data.table(read.table("data_raw/Utbruddsdata_20180419_2010_2012.txt"))
+s2 <- data.table(read.table("data_raw/Utbruddsdata_20180419_2013_2015.txt"))
+s3 <- data.table(read.table("data_raw/Utbruddsdata_20180419_2016_2017.txt"))
+
+# MAKE SURE WE ONLY USE "ALL AGES" -- NO NEED FOR THE SEPARATE AGE GROUPS
+s <- rbind(s1,s2,s3)[age=="Totalt"]
+
+# HANNE: MAYBE SMART TO RENAME SOME VARIABLES???
+# THIS WAY WE CAN LABEL SYKDOMSPULSEN VARIABLES WITH THE PREFIX s_
+setnames(s,"status","s_status")
+
+# remove s1, s2, s3 from the RAM of the computer, because they are big and we don't have that much space
+rm("s1")
+rm("s2")
+rm("s3")
+
+nrow(s)
+mergedData <- merge(s, fullData,
+                    by.x=c("location","year","week"),
+                    by.y=c("municip","ar","uke"))
+nrow(mergedData)
 
 ########################################################
 ##
