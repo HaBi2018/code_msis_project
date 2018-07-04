@@ -60,6 +60,18 @@ skeleton <- data.table(expand.grid(
 fullData <- merge(skeleton,data,by=c("municip","ar","uke"),all.x=T)
 fullData[is.na(num),num:=0]
 
+fullData[,num1:=shift(num,n=1L,type="lag"),by=.(municip,uke)]
+fullData[,num2:=shift(num,n=2L,type="lag"),by=.(municip,uke)]
+fullData[,num3:=shift(num,n=3L,type="lag"),by=.(municip,uke)]
+fullData[,num4:=shift(num,n=4L,type="lag"),by=.(municip,uke)]
+fullData[,num5:=shift(num,n=5L,type="lag"),by=.(municip,uke)]
+
+fullData[,last5yrAverage:=(num1+num2+num3+num4+num5)/5]
+
+# take a look at the data examples
+fullData[municip=="municip0301" & uke==3]
+fullData[municip=="municip5054" & uke==30]
+
 ########################################################
 ##
 ##        Opprette fiktiv tabell som inneholder alle kommuner, ?r og uker
