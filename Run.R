@@ -27,6 +27,7 @@ data2 <- merge(data,mergingData,by.x=c("municip","ar"),by.y=c("municip","year"),
 data2[is.na(municipEnd)]
 
 xtabs(~data2[is.na(municipEnd)]$municip)
+xtabs(~data2[is.na(municipEnd)]$municip+data2[is.na(municipEnd)]$ar)
 #end
 
 # merge in the dataset that says "kommune X -> kommune Y"
