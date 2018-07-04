@@ -25,6 +25,8 @@ data[,municip:=sprintf("municip%s",KommuneNr)]
 # find out who is missing
 data2 <- merge(data,mergingData,by.x=c("municip","ar"),by.y=c("municip","year"),all.x=T)
 data2[is.na(municipEnd)]
+
+xtabs(~data2[is.na(municipEnd)]$municip)
 #end
 
 # merge in the dataset that says "kommune X -> kommune Y"
