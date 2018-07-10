@@ -101,6 +101,38 @@ mergedData <- merge(s, fullData,
                     by.y=c("municip","ar","uke"))
 nrow(mergedData)
 
+# TRUE POSITIVE
+nrow(mergedData[msis_outbreak==TRUE&s_status!="High"])
+# TRUE POSITIVE=
+nrow(mergedData[msis_outbreak==TRUE&s_status!="Medium"])
+# TRUE NEGATIVE= 
+nrow(mergedData[msis_outbreak==FALSE&s_status!="Normal"])
+# FALSE POSITIVE= 
+nrow(mergedData[msis_outbreak==FALSE&s_status!="High"])
+# FALSE POSITIVE= 
+nrow(mergedData[msis_outbreak==FALSE&s_status!="Medium"])
+# FALSE NEGATIVE= 
+nrow(mergedData[msis_outbreak==TRUE&s_status!="Normal"])
+
+# CALCULATE:
+# PPV = TP/TP+FP
+
+# NPV = TN/TN+FN
+
+# sensitivity (TPR) =  TP/(TP+FN)
+
+# specificity (SPC) = TN/(TN+FP)
+
+
+
+
+
+
+
+
+
+
+
 ########################################################
 ##
 ##        Opprette fiktiv tabell som inneholder alle kommuner, ?r og uker
