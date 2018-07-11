@@ -128,11 +128,8 @@ nrow(mergedData[msis_outbreak==TRUE & s_status!="High"])
 
 # CALCULATE:
 # PPV = TP/TP+FP
-
 # NPV = TN/TN+FN
-
 # sensitivity (TPR) =  TP/(TP+FN)
-
 # specificity (SPC) = TN/(TN+FP)
 
 
