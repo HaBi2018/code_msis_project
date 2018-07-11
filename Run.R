@@ -101,18 +101,30 @@ mergedData <- merge(s, fullData,
                     by.y=c("municip","ar","uke"))
 nrow(mergedData)
 
-# TRUE POSITIVE
-nrow(mergedData[msis_outbreak==TRUE&s_status!="High"])
-# TRUE POSITIVE=
-nrow(mergedData[msis_outbreak==TRUE&s_status!="Medium"])
+head(mergedDataPop)
+
+## CALCULATIONS
+
+# Level 1:   No outbreak=normal / Outbreak=Medium+High
+# TRUE POSITIVE= 
+nrow(mergedData[msis_outbreak==TRUE & s_status!="Normal"])
 # TRUE NEGATIVE= 
-nrow(mergedData[msis_outbreak==FALSE&s_status!="Normal"])
+nrow(mergedData[msis_outbreak==FALSE & s_status=="Normal"]) 
 # FALSE POSITIVE= 
-nrow(mergedData[msis_outbreak==FALSE&s_status!="High"])
-# FALSE POSITIVE= 
-nrow(mergedData[msis_outbreak==FALSE&s_status!="Medium"])
+nrow(mergedData[msis_outbreak==FALSE & s_status!="Normal"])
 # FALSE NEGATIVE= 
-nrow(mergedData[msis_outbreak==TRUE&s_status!="Normal"])
+nrow(mergedData[msis_outbreak==TRUE & s_status=="Normal"]) 
+
+# Level 2:  No outbreak=normal+medium / Outbreak=high
+# TRUE POSITIVE= 
+nrow(mergedData[msis_outbreak==TRUE & s_status=="High"])
+# TRUE NEGATIVE= 
+nrow(mergedData[msis_outbreak==FALSE & s_status!="High"])
+# FALSE POSITIVE= 
+nrow(mergedData[msis_outbreak==FALSE & s_status=="High"])
+# FALSE NEGATIVE= 
+nrow(mergedData[msis_outbreak==TRUE & s_status!="High"])
+
 
 # CALCULATE:
 # PPV = TP/TP+FP
@@ -124,8 +136,19 @@ nrow(mergedData[msis_outbreak==TRUE&s_status!="Normal"])
 # specificity (SPC) = TN/(TN+FP)
 
 
+## RERUN ANALYSIS UNDER DIFFERENT STRATA
 
+# read in the popuation numbers
+municipNumbers <- data.table(readxl::read_excel("data_raw/municipNumbers.xlsx"))
 
+# merge with tabel showing population numbers
+mergedDataPop <- merge(mergedData, municipNumbers,by=c("location"),all.x=TRUE)
+
+# Table showing all municipalities with population > 5000
+dataPop5000<-subset(mergedDataPop, pop > 5000, 
+                    select=c(location, year, week, n, s_status, msis_outbreak)) 
+
+nrow(dataPop5000)
 
 
 
