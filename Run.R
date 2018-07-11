@@ -143,7 +143,7 @@ mergedDataPop <- merge(mergedData, municipNumbers,by=c("location"),all.x=TRUE)
 
 # Table showing all municipalities with population > 5000
 dataPop5000<-subset(mergedDataPop, pop > 5000, 
-                    select=c(location, year, week, n, s_status, msis_outbreak)) 
+                    select=c(location, year, week, n, s_status, msis_outbreak, pop)) 
 
 nrow(dataPop5000)
 
