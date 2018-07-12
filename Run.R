@@ -179,7 +179,10 @@ nrow(mergedDataPop)
 #dataPop5000<-subset(mergedDataPop, pop > 5000, 
 #                    select=c(location, year, week, n, s_status, msis_outbreak, pop)) 
 # THIS WAY IS BETTER TO DO SUBSETTING, AS WE ARE USING DATA.TABLE
+
 dataPop5000 <- mergedDataPop[pop>5000]
+# OR THIS WAY, IF YOU WANT TO REDUCE THE NUMBER OF COLUMNS
+dataPop5000 <- mergedDataPop[pop>5000,c("location", "year", "week", "n", "s_status", "msis_outbreak", "pop")]
 
 nrow(dataPop5000)
 
