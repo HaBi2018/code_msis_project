@@ -107,23 +107,25 @@ head(mergedDataPop)
 
 # Level 1:   No outbreak=normal / Outbreak=Medium+High
 # TRUE POSITIVE= 
-nrow(mergedData[msis_outbreak==TRUE & s_status!="Normal"])
+TP1 <- nrow(mergedData[msis_outbreak==TRUE & s_status!="Normal"])
 # TRUE NEGATIVE= 
-nrow(mergedData[msis_outbreak==FALSE & s_status=="Normal"]) 
+TN1 <- nrow(mergedData[msis_outbreak==FALSE & s_status=="Normal"]) 
 # FALSE POSITIVE= 
-nrow(mergedData[msis_outbreak==FALSE & s_status!="Normal"])
+FP1 <- nrow(mergedData[msis_outbreak==FALSE & s_status!="Normal"])
 # FALSE NEGATIVE= 
-nrow(mergedData[msis_outbreak==TRUE & s_status=="Normal"]) 
+FN1 <- nrow(mergedData[msis_outbreak==TRUE & s_status=="Normal"]) 
+
+
 
 # Level 2:  No outbreak=normal+medium / Outbreak=high
 # TRUE POSITIVE= 
-nrow(mergedData[msis_outbreak==TRUE & s_status=="High"])
+TP2 <- nrow(mergedData[msis_outbreak==TRUE & s_status=="High"])
 # TRUE NEGATIVE= 
-nrow(mergedData[msis_outbreak==FALSE & s_status!="High"])
+TN2 <- nrow(mergedData[msis_outbreak==FALSE & s_status!="High"])
 # FALSE POSITIVE= 
-nrow(mergedData[msis_outbreak==FALSE & s_status=="High"])
+FP2 <- nrow(mergedData[msis_outbreak==FALSE & s_status=="High"])
 # FALSE NEGATIVE= 
-nrow(mergedData[msis_outbreak==TRUE & s_status!="High"])
+FN2 <- nrow(mergedData[msis_outbreak==TRUE & s_status!="High"])
 
 
 # CALCULATE:
@@ -132,18 +134,52 @@ nrow(mergedData[msis_outbreak==TRUE & s_status!="High"])
 # sensitivity (TPR) =  TP/(TP+FN)
 # specificity (SPC) = TN/(TN+FP)
 
+# LVL1
+# PPV = TP/TP+FP
+TP1/(TP1+FP1)
+
+# NPV = TN/TN+FN
+TN1/(TN1+FN1)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+TP1/(TP1+FN1)
+
+# specificity (SPC) = TN/(TN+FP)
+TN1/(TN1+FP1)
+
+# LVL2
+# PPV = TP/TP+FP
+TP2/(TP2+FP2)
+
+# NPV = TN/TN+FN
+TN2/(TN2+FN2)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+TP2/(TP2+FN2)
+
+# specificity (SPC) = TN/(TN+FP)
+TN2/(TN2+FP2)
 
 ## RERUN ANALYSIS UNDER DIFFERENT STRATA
 
 # read in the popuation numbers
 municipNumbers <- data.table(readxl::read_excel("data_raw/municipNumbers.xlsx"))
 
+# DOES POP ALREADY EXIST AS A VARIABLE??? IF SO, WE NEED TO DELETE IT
+mergedData[,pop:=NULL]
+
 # merge with tabel showing population numbers
-mergedDataPop <- merge(mergedData, municipNumbers,by=c("location"),all.x=TRUE)
+mergedDataPop <- merge(mergedData, municipNumbers,by=c("location"))
+
+# CHECK same amount of rows???
+nrow(mergedData)
+nrow(mergedDataPop)
 
 # Table showing all municipalities with population > 5000
-dataPop5000<-subset(mergedDataPop, pop > 5000, 
-                    select=c(location, year, week, n, s_status, msis_outbreak, pop)) 
+#dataPop5000<-subset(mergedDataPop, pop > 5000, 
+#                    select=c(location, year, week, n, s_status, msis_outbreak, pop)) 
+# THIS WAY IS BETTER TO DO SUBSETTING, AS WE ARE USING DATA.TABLE
+dataPop5000 <- mergedDataPop[pop>5000]
 
 nrow(dataPop5000)
 
