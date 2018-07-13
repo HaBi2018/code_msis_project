@@ -101,7 +101,7 @@ mergedData <- merge(s, fullData,
                     by.y=c("municip","ar","uke"))
 nrow(mergedData)
 
-head(mergedDataPop)
+
 
 ## CALCULATIONS
 
@@ -166,7 +166,7 @@ TN2/(TN2+FP2)
 municipNumbers <- data.table(readxl::read_excel("data_raw/municipNumbers.xlsx"))
 
 # DOES POP ALREADY EXIST AS A VARIABLE??? IF SO, WE NEED TO DELETE IT
-mergedData[,pop:=NULL]
+# mergedData[,pop:=NULL]
 
 # merge with tabel showing population numbers
 mergedDataPop <- merge(mergedData, municipNumbers,by=c("location"))
@@ -185,6 +185,71 @@ dataPop5000 <- mergedDataPop[pop>5000]
 dataPop5000 <- mergedDataPop[pop>5000,c("location", "year", "week", "n", "s_status", "msis_outbreak", "pop")]
 
 nrow(dataPop5000)
+
+
+
+## CALCULATIONS when pop > 5000
+
+# Level 1:   No outbreak=normal / Outbreak=Medium+High
+# TRUE POSITIVE= 
+TP1 <- nrow(dataPop5000[msis_outbreak==TRUE & s_status!="Normal"])
+# TRUE NEGATIVE= 
+TN1 <- nrow(dataPop5000[msis_outbreak==FALSE & s_status=="Normal"]) 
+# FALSE POSITIVE= 
+FP1 <- nrow(dataPop5000[msis_outbreak==FALSE & s_status!="Normal"])
+# FALSE NEGATIVE= 
+FN1 <- nrow(dataPop5000[msis_outbreak==TRUE & s_status=="Normal"]) 
+
+
+
+# Level 2:  No outbreak=normal+medium / Outbreak=high
+# TRUE POSITIVE= 
+TP2 <- nrow(dataPop5000[msis_outbreak==TRUE & s_status=="High"])
+# TRUE NEGATIVE= 
+TN2 <- nrow(dataPop5000[msis_outbreak==FALSE & s_status!="High"])
+# FALSE POSITIVE= 
+FP2 <- nrow(dataPop5000[msis_outbreak==FALSE & s_status=="High"])
+# FALSE NEGATIVE= 
+FN2 <- nrow(dataPop5000[msis_outbreak==TRUE & s_status!="High"])
+
+
+# CALCULATE:
+# PPV = TP/TP+FP
+# NPV = TN/TN+FN
+# sensitivity (TPR) =  TP/(TP+FN)
+# specificity (SPC) = TN/(TN+FP)
+
+# LVL1
+# PPV = TP/TP+FP
+TP1/(TP1+FP1)
+
+# NPV = TN/TN+FN
+TN1/(TN1+FN1)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+TP1/(TP1+FN1)
+
+# specificity (SPC) = TN/(TN+FP)
+TN1/(TN1+FP1)
+
+# LVL2
+# PPV = TP/TP+FP
+TP2/(TP2+FP2)
+
+# NPV = TN/TN+FN
+TN2/(TN2+FN2)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+TP2/(TP2+FN2)
+
+# specificity (SPC) = TN/(TN+FP)
+TN2/(TN2+FP2)
+
+
+
+
+
+
 
 
 
