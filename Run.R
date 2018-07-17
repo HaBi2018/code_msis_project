@@ -247,6 +247,251 @@ TN2/(TN2+FP2)
 
 
 
+# Table showing all municipalities with population > 50000
+
+dataPop50000 <- mergedDataPop[pop>50000]
+# OR THIS WAY, IF YOU WANT TO REDUCE THE NUMBER OF COLUMNS
+dataPop50000 <- mergedDataPop[pop>50000,c("location", "year", "week", "n", "s_status", "msis_outbreak", "pop")]
+
+nrow(dataPop50000)
+
+
+
+## CALCULATIONS when pop > 50000
+
+# Level 1:   No outbreak=normal / Outbreak=Medium+High
+# TRUE POSITIVE= 
+TP1 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status!="Normal"])
+# TRUE NEGATIVE= 
+TN1 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status=="Normal"]) 
+# FALSE POSITIVE= 
+FP1 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status!="Normal"])
+# FALSE NEGATIVE= 
+FN1 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status=="Normal"]) 
+
+
+
+# Level 2:  No outbreak=normal+medium / Outbreak=high
+# TRUE POSITIVE= 
+TP2 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status=="High"])
+# TRUE NEGATIVE= 
+TN2 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status!="High"])
+# FALSE POSITIVE= 
+FP2 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status=="High"])
+# FALSE NEGATIVE= 
+FN2 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status!="High"])
+
+
+# CALCULATE:
+# PPV = TP/TP+FP
+# NPV = TN/TN+FN
+# sensitivity (TPR) =  TP/(TP+FN)
+# specificity (SPC) = TN/(TN+FP)
+
+# LVL1
+# PPV = TP/TP+FP
+TP1/(TP1+FP1)
+
+# NPV = TN/TN+FN
+TN1/(TN1+FN1)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+TP1/(TP1+FN1)
+
+# specificity (SPC) = TN/(TN+FP)
+TN1/(TN1+FP1)
+
+# LVL2
+# PPV = TP/TP+FP
+TP2/(TP2+FP2)
+
+# NPV = TN/TN+FN
+TN2/(TN2+FN2)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+TP2/(TP2+FN2)
+
+# specificity (SPC) = TN/(TN+FP)
+TN2/(TN2+FP2)
+
+
+
+
+## PREPARE VESUV 
+
+# read in the raw data
+library(readxl)
+v <- data.table(readxl::read_excel("data_raw/Vesuv_2007_2017.xlsx"))
+
+nrow(v)
+
+
+# add week numbers, must have "lubridate" - THIS ONLY GIVE ERROR MESSAGE ON CHARACKTER (V$DATOrEG). Not made for data.table?
+library(lubridate)
+x<-as.POSIXlt(v$DatoReg)
+v$uke<-strftime(x, format="%V")
+
+head(v)
+
+v2<-v
+
+
+
+
+### NEED TO CONVERT FROM NAMES TO MUNICIPALITY NUMBERS - or do this manually?
+
+
+### NEED TO CONVERT FROM OLD TO NEW NUMBERS
+
+
+# Exclude all rows where Column Type = Helseinstitusjon, 
+nrow()
+
+
+
+
+
+
+
+# Delete all rows where column Kommune is empty
+
+
+
+
+
+# Add column vesuv_outbreak
+v2$vesuv_outbreak<-1
+
+
+# delete columns 
+vFull<- v2[c("ar", "uke", "vesuv_outbreak","municip")]
+
+
+vesuv<-VFull
+
+
+
+
+
+
+## MERGE DATASETS (SP + M) with VESUV
+
+fullData <- merge(mergedDataPop, vesuv, by=c(“municip”,”ar”,”uke”), all.x=T)
+
+# the all.x=T means keep ALL the rows from mergedDataPop, even if they cant be merged with vesuv
+
+
+
+# You will then notice that A LOT of the data didn’t merge (as you only have 1400 rows for vesuv). 
+# This means that everything that *didn’t* merge, is NOT an outbreak. So we fill in that information:
+  
+fullData[is.na(vesuv_outbreak),vesuv_outbreak:=1]
+
+
+# CALCULATIONS SP + M + V
+## NEED TO FILL IN RIGHT DATA SETS, AND RIGHT ARGUMENTS
+
+# EX 
+# TRUE POSITIVE= 
+# TP1 <- nrow(fullData[(vesuv==1 or msis_outbreak==TRUE) & s_status!="Normal"])
+
+
+
+# Level 1:   No outbreak=normal / Outbreak=Medium+High
+# TRUE POSITIVE= 
+TP1 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status!="Normal"])
+# TRUE NEGATIVE= 
+TN1 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status=="Normal"]) 
+# FALSE POSITIVE= 
+FP1 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status!="Normal"])
+# FALSE NEGATIVE= 
+FN1 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status=="Normal"]) 
+
+
+
+# Level 2:  No outbreak=normal+medium / Outbreak=high
+# TRUE POSITIVE= 
+TP2 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status=="High"])
+# TRUE NEGATIVE= 
+TN2 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status!="High"])
+# FALSE POSITIVE= 
+FP2 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status=="High"])
+# FALSE NEGATIVE= 
+FN2 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status!="High"])
+
+
+
+
+
+
+
+# CALCULATE:
+# PPV = TP/TP+FP
+# NPV = TN/TN+FN
+# sensitivity (TPR) =  TP/(TP+FN)
+# specificity (SPC) = TN/(TN+FP)
+
+# LVL1
+# PPV = TP/TP+FP
+TP1/(TP1+FP1)
+
+# NPV = TN/TN+FN
+TN1/(TN1+FN1)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+TP1/(TP1+FN1)
+
+# specificity (SPC) = TN/(TN+FP)
+TN1/(TN1+FP1)
+
+# LVL2
+# PPV = TP/TP+FP
+TP2/(TP2+FP2)
+
+# NPV = TN/TN+FN
+TN2/(TN2+FN2)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+TP2/(TP2+FN2)
+
+# specificity (SPC) = TN/(TN+FP)
+TN2/(TN2+FP2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -338,6 +583,19 @@ koblet$Antall<-koblet$antall.x+koblet$antall.y
 koblet
 
 ###### dette medf?rer at alle komm, aar og uker som ikke inneholder verdi>0 forsvinner.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
