@@ -2,11 +2,23 @@ if (.Platform$OS.type == "unix") {
   # if unix machine (i.e. Richard)
   setwd("/docs/help/msis_project")
   fileSources = file.path("code_msis_project/code", list.files("code_msis_project/code", pattern = "*.[rR]$"))
+  SHARED_FOLDER <- file.path("/dropbox","analyses","results_shared","help","sykdomspulsen_project")
 } else {
   # if NOT unix machine (i.e. Hanne)
   setwd("C:/Users/Hanne/Documents/NMBU/Masteroppgave/msis_project") 
   fileSources = file.path("C:/Users/Hanne/Documents/NMBU/Masteroppgave/msis_project/code_msis_project/code", list.files("code_msis_project/code", pattern = "*.[rR]$"))
+  SHARED_FOLDER <- file.path("~","Dropbox","sykdomspulsen_project")
 }
+
+if(!dir.exists(SHARED_FOLDER)){
+  stop("DROPBOX FOLDER ISNT CORRECTLY SPECIFIED")
+  quit()
+}
+
+# specify the folder for today's results
+SHARED_FOLDER_TODAY <- file.path(SHARED_FOLDER,lubridate::today())
+# create that folder
+dir.create(SHARED_FOLDER_TODAY)
 
 #test test
 # LOADS IN ALL R SCRIPTS THAT ARE LOCATED IN THE "code" folder
@@ -44,7 +56,7 @@ setnames(data,"municipEnd","municip")
 data <- data[,.(num=.N),by=.(municip,ar,uke)]
 
 skeleton <- data.table(expand.grid(
-  municip=unique(data$municip),
+  municip=unique(mergingData[year==2018]$municipEnd),
   ar=2007:2017,
   uke=1:52
     ))
@@ -134,18 +146,27 @@ FN2 <- nrow(mergedData[msis_outbreak==TRUE & s_status!="High"])
 # sensitivity (TPR) =  TP/(TP+FN)
 # specificity (SPC) = TN/(TN+FP)
 
+results <- list()
 # LVL1
 # PPV = TP/TP+FP
-TP1/(TP1+FP1)
+(tmp <- TP1/(TP1+FP1))
+results[["PPV1"]] <- data.frame(Outbreak="Medium+High",var="PPV",value=tmp)
 
 # NPV = TN/TN+FN
-TN1/(TN1+FN1)
+(tmp <- TN1/(TN1+FN1))
+results[["NPV1"]] <- data.frame(Outbreak="Medium+High",var="NPV",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
-TP1/(TP1+FN1)
+(tmp <- TP1/(TP1+FN1))
+results[["SENS1"]] <- data.frame(Outbreak="Medium+High",var="Sensitivity",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
-TN1/(TN1+FP1)
+(tmp <- TN1/(TN1+FP1))
+results[["SPEC1"]] <- data.frame(Outbreak="Medium+High",var="Specificity",value=tmp)
+
+results <- rbindlist(results)
+results
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_vs_msis.xlsx"))
 
 # LVL2
 # PPV = TP/TP+FP
@@ -320,7 +341,6 @@ TN2/(TN2+FP2)
 ## PREPARE VESUV 
 
 # read in the raw data
-library(readxl)
 v <- data.table(readxl::read_excel("data_raw/Vesuv_2007_2017.xlsx"))
 
 nrow(v)
@@ -329,13 +349,10 @@ nrow(v)
 # add week numbers, must have "lubridate" - THIS ONLY GIVE ERROR MESSAGE ON CHARACKTER (V$DATOrEG). Not made for data.table?
 library(lubridate)
 x<-as.POSIXlt(v$DatoReg)
-v$uke<-strftime(x, format="%V")
+v[,date:=as.Date(`Dato registrert`,format="%d.%m.%Y")]
+v[,uke:=strftime(date, format="%V")]
 
-head(v)
-
-v2<-v
-
-
+vInstitution <- v[Type!="Helseinstitusjon"]
 
 
 ### NEED TO CONVERT FROM NAMES TO MUNICIPALITY NUMBERS - or do this manually?
