@@ -7,7 +7,7 @@ if (.Platform$OS.type == "unix") {
   # if NOT unix machine (i.e. Hanne)
   setwd("C:/Users/Hanne/Documents/NMBU/Masteroppgave/msis_project") 
   fileSources = file.path("C:/Users/Hanne/Documents/NMBU/Masteroppgave/msis_project/code_msis_project/code", list.files("code_msis_project/code", pattern = "*.[rR]$"))
-  SHARED_FOLDER <- file.path("~","Dropbox","sykdomspulsen_project")
+  SHARED_FOLDER <- file.path("C:/Users/Hanne/Dropbox/00 NMBU/Masteroppgave/results_shared/sykdomspulsen_project")
 }
 
 if(!dir.exists(SHARED_FOLDER)){
@@ -338,71 +338,96 @@ TN2/(TN2+FP2)
 
 
 
-## PREPARE VESUV 
+## PREPARE VESUV #############################
 
 # read in the raw data
 v <- data.table(readxl::read_excel("data_raw/Vesuv_2007_2017.xlsx"))
 
+# make a "municip" variable so that it is the same as in "mergingDataV"
+v[,municip:=sprintf("municip%s",KommuneNr)]
+
 nrow(v)
 
-
-# add week numbers, must have "lubridate" - THIS ONLY GIVE ERROR MESSAGE ON CHARACKTER (V$DATOrEG). Not made for data.table?
+# add week numbers, must have "lubridate" - STILL GETS ERROR MESSAGES (character string is not in a standard unambiguous format
 library(lubridate)
-x<-as.POSIXlt(v$DatoReg)
-v[,date:=as.Date(`Dato registrert`,format="%d.%m.%Y")]
+v[,date:=as.Date(`DatoReg`,format="%d.%m.%Y")]
 v[,uke:=strftime(date, format="%V")]
-
-vInstitution <- v[Type!="Helseinstitusjon"]
-
-
-### NEED TO CONVERT FROM NAMES TO MUNICIPALITY NUMBERS - or do this manually?
-
-
-### NEED TO CONVERT FROM OLD TO NEW NUMBERS
-
-
-# Exclude all rows where Column Type = Helseinstitusjon, 
-nrow()
-
-
-
-
-
 
 
 # Delete all rows where column Kommune is empty
+vNull<-v[municip!="municipNA"]
+
+nrow(vNull)
+
+# Remove all registrations done from Helseinstitusjoner
+vInstitution <- vNull[Type!="Helseinstitusjon"]
+
+nrow(vInstitution)
+
+
+# Create column called vesuv_outbreak, with all <- 1
+vInstitution$vesuv_outbreak<-1
+
+
+# delete columns, so only location, year, week and vesuv_outbreak is left 
+vFull<- vInstitution
+vFull[, c("DatoReg", "KommuneNr", "date", "Kommune", "Type"):=NULL] 
+
+setnames(vFull,"uke","week")
+
+vFull
+nrow(vFull)
+
+
+# Convert from old to new municipality numbers also in Vesuv
+# read in a "merging" dataset that says "which kommune goes to a different kommune"
+mergingData <- GenNorwayMunicipMerging()
+
+
+# find out who is missing
+data2 <- merge(vFull,mergingData,by.x=c("municip","year"),by.y=c("municip","year"),all.x=T)
+data2[is.na(municipEnd)]
+
+xtabs(~data2[is.na(municipEnd)]$municip)
+xtabs(~data2[is.na(municipEnd)]$municip+data2[is.na(municipEnd)]$year)
+#end
+
+
+# merge in the dataset that says "kommune X -> kommune Y"
+nrow(vFull) # number of rows in the dataset before merging
+vFull <- merge(vFull,mergingData,by.x=c("municip","year"),by.y=c("municip","year"))
+nrow(vFull) # number of rows in the dataset after merging -- ARE THESE THE SAME????? 
+
+# delete "municip", because we now use "municipEnd"
+vFull[,municip:=NULL]
+
+setnames(vFull,"municipEnd","location")
+
+
+setcolorder(vFull, c("location", "year", "week", "vesuv_outbreak"))
 
 
 
+## MERGE ALL DATASETS WITH VESUV AS GOLDEN STANDARD #######
+
+vFull
+mergedDataPop
 
 
-# Add column vesuv_outbreak
-v2$vesuv_outbreak<-1
-
-
-# delete columns 
-vFull<- v2[c("ar", "uke", "vesuv_outbreak","municip")]
-
-
-vesuv<-VFull
-
-
-
-
-
-
-## MERGE DATASETS (SP + M) with VESUV
-
-fullData <- merge(mergedDataPop, vesuv, by=c(“municip”,”ar”,”uke”), all.x=T)
-
+# Merge vesuv dataset with mergedDataPop
 # the all.x=T means keep ALL the rows from mergedDataPop, even if they cant be merged with vesuv
-
-
+fullData <- merge(mergedDataPop, vFull, by=c("location","year","week"), all.x=T)
 
 # You will then notice that A LOT of the data didn’t merge (as you only have 1400 rows for vesuv). 
 # This means that everything that *didn’t* merge, is NOT an outbreak. So we fill in that information:
   
 fullData[is.na(vesuv_outbreak),vesuv_outbreak:=1]
+
+
+
+
+
+
 
 
 # CALCULATIONS SP + M + V
@@ -473,12 +498,6 @@ TP2/(TP2+FN2)
 
 # specificity (SPC) = TN/(TN+FP)
 TN2/(TN2+FP2)
-
-
-
-
-
-
 
 
 
