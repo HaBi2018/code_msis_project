@@ -34,13 +34,8 @@ data <- data.table(readxl::read_excel("data_raw/msis_07_17.xlsx"))
 # make a "municip" variable so that it is the same as in "mergingData"
 data[,municip:=sprintf("municip%s",KommuneNr)]
 
-# find out who is missing
-data2 <- merge(data,mergingData,by.x=c("municip","ar"),by.y=c("municip","year"),all.x=T)
-data2[is.na(municipEnd)]
 
-xtabs(~data2[is.na(municipEnd)]$municip)
-xtabs(~data2[is.na(municipEnd)]$municip+data2[is.na(municipEnd)]$ar)
-#end
+
 
 # merge in the dataset that says "kommune X -> kommune Y"
 nrow(data) # number of rows in the dataset before merging
@@ -115,7 +110,7 @@ nrow(mergedData)
 
 
 
-## CALCULATIONS
+## CALCULATIONS SP vs MSIS (gold)
 
 # Level 1:   No outbreak=normal / Outbreak=Medium+High
 # TRUE POSITIVE= 
@@ -272,13 +267,13 @@ TN2/(TN2+FP2)
 
 dataPop50000 <- mergedDataPop[pop>50000]
 # OR THIS WAY, IF YOU WANT TO REDUCE THE NUMBER OF COLUMNS
-dataPop50000 <- mergedDataPop[pop>50000,c("location", "year", "week", "n", "s_status", "msis_outbreak", "pop")]
+# dataPop50000 <- mergedDataPop[pop>50000,c("location", "year", "week", "n", "s_status", "msis_outbreak", "pop")]
 
 nrow(dataPop50000)
 
 
 
-## CALCULATIONS when pop > 50000
+## CALCULATIONS when pop > 50 000
 
 # Level 1:   No outbreak=normal / Outbreak=Medium+High
 # TRUE POSITIVE= 
@@ -337,6 +332,73 @@ TN2/(TN2+FP2)
 
 
 
+# Table showing all municipalities with population > 10 000
+
+dataPop10000 <- mergedDataPop[pop>10000]
+# OR THIS WAY, IF YOU WANT TO REDUCE THE NUMBER OF COLUMNS
+# dataPop10000 <- mergedDataPop[pop>10000,c("location", "year", "week", "n", "s_status", "msis_outbreak", "pop")]
+
+nrow(dataPop10000)
+
+
+
+## CALCULATIONS when pop > 10 000
+
+# Level 1:   No outbreak=normal / Outbreak=Medium+High
+# TRUE POSITIVE= 
+TP1 <- nrow(dataPop10000[msis_outbreak==TRUE & s_status!="Normal"])
+# TRUE NEGATIVE= 
+TN1 <- nrow(dataPop10000[msis_outbreak==FALSE & s_status=="Normal"]) 
+# FALSE POSITIVE= 
+FP1 <- nrow(dataPop10000[msis_outbreak==FALSE & s_status!="Normal"])
+# FALSE NEGATIVE= 
+FN1 <- nrow(dataPop10000[msis_outbreak==TRUE & s_status=="Normal"]) 
+
+
+
+# Level 2:  No outbreak=normal+medium / Outbreak=high
+# TRUE POSITIVE= 
+TP2 <- nrow(dataPop10000[msis_outbreak==TRUE & s_status=="High"])
+# TRUE NEGATIVE= 
+TN2 <- nrow(dataPop10000[msis_outbreak==FALSE & s_status!="High"])
+# FALSE POSITIVE= 
+FP2 <- nrow(dataPop10000[msis_outbreak==FALSE & s_status=="High"])
+# FALSE NEGATIVE= 
+FN2 <- nrow(dataPop10000[msis_outbreak==TRUE & s_status!="High"])
+
+
+# CALCULATE:
+# PPV = TP/TP+FP
+# NPV = TN/TN+FN
+# sensitivity (TPR) =  TP/(TP+FN)
+# specificity (SPC) = TN/(TN+FP)
+
+# LVL1
+# PPV = TP/TP+FP
+TP1/(TP1+FP1)
+
+# NPV = TN/TN+FN
+TN1/(TN1+FN1)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+TP1/(TP1+FN1)
+
+# specificity (SPC) = TN/(TN+FP)
+TN1/(TN1+FP1)
+
+# LVL2
+# PPV = TP/TP+FP
+TP2/(TP2+FP2)
+
+# NPV = TN/TN+FN
+TN2/(TN2+FN2)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+TP2/(TP2+FN2)
+
+# specificity (SPC) = TN/(TN+FP)
+TN2/(TN2+FP2)
+
 
 ## PREPARE VESUV #############################
 
@@ -348,7 +410,7 @@ v[,municip:=sprintf("municip%s",KommuneNr)]
 
 nrow(v)
 
-# add week numbers, must have "lubridate" - STILL GETS ERROR MESSAGES (character string is not in a standard unambiguous format
+# add week numbers, must have "lubridate" 
 library(lubridate)
 v[,date:=as.Date(`DatoReg`,format="%d.%m.%Y")]
 v[,uke:=strftime(date, format="%V")]
@@ -408,25 +470,41 @@ setcolorder(vFull, c("location", "year", "week", "vesuv_outbreak"))
 
 
 
-## MERGE ALL DATASETS WITH VESUV AS GOLDEN STANDARD #######
+## MERGE ALL DATASETS #######
 
-vFull
-mergedDataPop
+vFull # Vesuv dataset
+nrow(vFull)
+mergedDataPop # msis and Sykdomspulsen + popukation 
+nrow(mergedDataPop)
 
 
-# Merge vesuv dataset with mergedDataPop
+### Merge vesuv dataset with mergedDataPop
 # the all.x=T means keep ALL the rows from mergedDataPop, even if they cant be merged with vesuv
-fullData <- merge(mergedDataPop, vFull, by=c("location","year","week"), all.x=T)
+# fullData <- merge(mergedDataPop, vFull, by=c("location","year","week"), all.x=T) GIVES ERROR MESSAGE:
+# Error in bmerge(i, x, leftcols, rightcols, io, xo, roll, rollends, nomatch,  : x.'week' is a character column being joined to i.'week' which is type 'double'. 
+# Therefor:
+
+vFullChar<-vFull[, week:=as.numeric(week)]
+str(vFullChar)
+str(mergedDataPop)
+
+fullData <- merge(mergedDataPop, vFullChar, by=c("location","year","week"), all.x=T)
+nrow(fullData)
+fullData
 
 # You will then notice that A LOT of the data didn’t merge (as you only have 1400 rows for vesuv). 
 # This means that everything that *didn’t* merge, is NOT an outbreak. So we fill in that information:
   
 fullData[is.na(vesuv_outbreak),vesuv_outbreak:=1]
+nrow(fullData)
 
 
+# delete columns
+fullData[, c("threshold0", "threshold2", "threshold4","type","age","n","num", "num1","num2", "num3","num4", "num5","msis_threshold", "msis_last5yrAverage"):=NULL] 
 
+setcolorder(fullData, c("location","locationName", "pop", "year", "week", "vesuv_outbreak","msis_outbreak","s_status"))
 
-
+fullData
 
 
 
