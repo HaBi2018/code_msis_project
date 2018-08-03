@@ -26,6 +26,8 @@ sapply(fileSources, source, .GlobalEnv)
 
 library(data.table)
 
+### PREPARE MSIS DATA
+
 # read in a "merging" dataset that says "which kommune goes to a different kommune"
 mergingData <- GenNorwayMunicipMerging()
 
@@ -33,9 +35,6 @@ mergingData <- GenNorwayMunicipMerging()
 data <- data.table(readxl::read_excel("data_raw/msis_07_17.xlsx"))
 # make a "municip" variable so that it is the same as in "mergingData"
 data[,municip:=sprintf("municip%s",KommuneNr)]
-
-
-
 
 # merge in the dataset that says "kommune X -> kommune Y"
 nrow(data) # number of rows in the dataset before merging
@@ -48,8 +47,11 @@ data[,Bokomm:=NULL]
 
 setnames(data,"municipEnd","municip")
 
+# Aggregate registrations in msis, pr municip, yr and week
 data <- data[,.(num=.N),by=.(municip,ar,uke)]
 
+
+# Create skeleton table to include all municip, years and weeks
 skeleton <- data.table(expand.grid(
   municip=unique(mergingData[year==2018]$municipEnd),
   ar=2007:2017,
@@ -58,7 +60,9 @@ skeleton <- data.table(expand.grid(
 
 fullData <- merge(skeleton,data,by=c("municip","ar","uke"),all.x=T)
 fullData[is.na(num),num:=0]
+nrow(fullData)
 
+#
 fullData[,num1:=shift(num,n=1L,type="lag"),by=.(municip,uke)]
 fullData[,num2:=shift(num,n=2L,type="lag"),by=.(municip,uke)]
 fullData[,num3:=shift(num,n=3L,type="lag"),by=.(municip,uke)]
@@ -486,7 +490,9 @@ nrow(mergedDataPop)
 
 vFullChar<-vFull[, week:=as.numeric(week)]
 str(vFullChar)
+nrow(vFullChar)
 str(mergedDataPop)
+nrow(mergedDataPop)
 
 fullData <- merge(mergedDataPop, vFullChar, by=c("location","year","week"), all.x=T)
 nrow(fullData)
@@ -505,6 +511,20 @@ fullData[, c("threshold0", "threshold2", "threshold4","type","age","n","num", "n
 setcolorder(fullData, c("location","locationName", "pop", "year", "week", "vesuv_outbreak","msis_outbreak","s_status"))
 
 fullData
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
