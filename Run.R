@@ -149,36 +149,42 @@ results <- list()
 # LVL1
 # PPV = TP/TP+FP
 (tmp <- TP1/(TP1+FP1))
-results[["PPV1"]] <- data.frame(Outbreak="Medium+High",var="PPV",value=tmp)
+results[["PPV1"]] <- data.frame(Outbreak="Medium+High",var="PPV1",value=tmp)
 
 # NPV = TN/TN+FN
 (tmp <- TN1/(TN1+FN1))
-results[["NPV1"]] <- data.frame(Outbreak="Medium+High",var="NPV",value=tmp)
+results[["NPV1"]] <- data.frame(Outbreak="Medium+High",var="NPV1",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
 (tmp <- TP1/(TP1+FN1))
-results[["SENS1"]] <- data.frame(Outbreak="Medium+High",var="Sensitivity",value=tmp)
+results[["SENS1"]] <- data.frame(Outbreak="Medium+High",var="Sensitivity1",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
 (tmp <- TN1/(TN1+FP1))
-results[["SPEC1"]] <- data.frame(Outbreak="Medium+High",var="Specificity",value=tmp)
+results[["SPEC1"]] <- data.frame(Outbreak="Medium+High",var="Specificity1",value=tmp)
+
+# LVL2
+# PPV = TP/TP+FP
+(tmp <- TP2/(TP2+FP2))
+results[["PPV2"]] <- data.frame(Outbreak="High",var="PPV2",value=tmp)
+
+# NPV = TN/TN+FN
+(tmp <- TN2/(TN2+FN2))
+results[["NPV2"]] <- data.frame(Outbreak="High",var="NPV2",value=tmp)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+(tmp <- TP2/(TP2+FN2))
+results[["SENS2"]] <- data.frame(Outbreak="High",var="Sensitivity2",value=tmp)
+
+# specificity (SPC) = TN/(TN+FP)
+(tmp <- TN2/(TN2+FP2))
+results[["SPEC2"]] <- data.frame(Outbreak="High",var="Specificity2",value=tmp)
+
 
 results <- rbindlist(results)
 results
 openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_vs_msis.xlsx"))
 
-# LVL2
-# PPV = TP/TP+FP
-TP2/(TP2+FP2)
-
-# NPV = TN/TN+FN
-TN2/(TN2+FN2)
-
-# sensitivity (TPR) =  TP/(TP+FN)
-TP2/(TP2+FN2)
-
-# specificity (SPC) = TN/(TN+FP)
-TN2/(TN2+FP2)
 
 ## RERUN ANALYSIS UNDER DIFFERENT STRATA
 
@@ -200,7 +206,7 @@ nrow(mergedDataPop)
 #                    select=c(location, year, week, n, s_status, msis_outbreak, pop)) 
 # THIS WAY IS BETTER TO DO SUBSETTING, AS WE ARE USING DATA.TABLE
 
-dataPop5000 <- mergedDataPop[pop>5000]
+# dataPop5000 <- mergedDataPop[pop>5000]
 # OR THIS WAY, IF YOU WANT TO REDUCE THE NUMBER OF COLUMNS
 dataPop5000 <- mergedDataPop[pop>5000,c("location", "year", "week", "n", "s_status", "msis_outbreak", "pop")]
 
@@ -221,7 +227,6 @@ FP1 <- nrow(dataPop5000[msis_outbreak==FALSE & s_status!="Normal"])
 FN1 <- nrow(dataPop5000[msis_outbreak==TRUE & s_status=="Normal"]) 
 
 
-
 # Level 2:  No outbreak=normal+medium / Outbreak=high
 # TRUE POSITIVE= 
 TP2 <- nrow(dataPop5000[msis_outbreak==TRUE & s_status=="High"])
@@ -233,38 +238,45 @@ FP2 <- nrow(dataPop5000[msis_outbreak==FALSE & s_status=="High"])
 FN2 <- nrow(dataPop5000[msis_outbreak==TRUE & s_status!="High"])
 
 
-# CALCULATE:
-# PPV = TP/TP+FP
-# NPV = TN/TN+FN
-# sensitivity (TPR) =  TP/(TP+FN)
-# specificity (SPC) = TN/(TN+FP)
-
+results <- list()
 # LVL1
 # PPV = TP/TP+FP
-TP1/(TP1+FP1)
+(tmp <- TP1/(TP1+FP1))
+results[["PPV1"]] <- data.frame(Outbreak="Medium+High",var="PPV1",value=tmp)
 
 # NPV = TN/TN+FN
-TN1/(TN1+FN1)
+(tmp <- TN1/(TN1+FN1))
+results[["NPV1"]] <- data.frame(Outbreak="Medium+High",var="NPV1",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
-TP1/(TP1+FN1)
+(tmp <- TP1/(TP1+FN1))
+results[["SENS1"]] <- data.frame(Outbreak="Medium+High",var="Sensitivity1",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
-TN1/(TN1+FP1)
+(tmp <- TN1/(TN1+FP1))
+results[["SPEC1"]] <- data.frame(Outbreak="Medium+High",var="Specificity1",value=tmp)
 
 # LVL2
 # PPV = TP/TP+FP
-TP2/(TP2+FP2)
+(tmp <- TP2/(TP2+FP2))
+results[["PPV2"]] <- data.frame(Outbreak="High",var="PPV2",value=tmp)
 
 # NPV = TN/TN+FN
-TN2/(TN2+FN2)
+(tmp <- TN2/(TN2+FN2))
+results[["NPV2"]] <- data.frame(Outbreak="High",var="NPV2",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
-TP2/(TP2+FN2)
+(tmp <- TP2/(TP2+FN2))
+results[["SENS2"]] <- data.frame(Outbreak="High",var="Sensitivity2",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
-TN2/(TN2+FP2)
+(tmp <- TN2/(TN2+FP2))
+results[["SPEC2"]] <- data.frame(Outbreak="High",var="Specificity2",value=tmp)
 
+
+results <- rbindlist(results)
+results
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_vs_msis_pop5000.xlsx"))
 
 
 # Table showing all municipalities with population > 50000
@@ -290,7 +302,6 @@ FP1 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status!="Normal"])
 FN1 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status=="Normal"]) 
 
 
-
 # Level 2:  No outbreak=normal+medium / Outbreak=high
 # TRUE POSITIVE= 
 TP2 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status=="High"])
@@ -308,32 +319,46 @@ FN2 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status!="High"])
 # sensitivity (TPR) =  TP/(TP+FN)
 # specificity (SPC) = TN/(TN+FP)
 
+
+results <- list()
 # LVL1
 # PPV = TP/TP+FP
-TP1/(TP1+FP1)
+(tmp <- TP1/(TP1+FP1))
+results[["PPV1"]] <- data.frame(Outbreak="Medium+High",var="PPV1",value=tmp)
 
 # NPV = TN/TN+FN
-TN1/(TN1+FN1)
+(tmp <- TN1/(TN1+FN1))
+results[["NPV1"]] <- data.frame(Outbreak="Medium+High",var="NPV1",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
-TP1/(TP1+FN1)
+(tmp <- TP1/(TP1+FN1))
+results[["SENS1"]] <- data.frame(Outbreak="Medium+High",var="Sensitivity1",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
-TN1/(TN1+FP1)
+(tmp <- TN1/(TN1+FP1))
+results[["SPEC1"]] <- data.frame(Outbreak="Medium+High",var="Specificity1",value=tmp)
 
 # LVL2
 # PPV = TP/TP+FP
-TP2/(TP2+FP2)
+(tmp <- TP2/(TP2+FP2))
+results[["PPV2"]] <- data.frame(Outbreak="High",var="PPV2",value=tmp)
 
 # NPV = TN/TN+FN
-TN2/(TN2+FN2)
+(tmp <- TN2/(TN2+FN2))
+results[["NPV2"]] <- data.frame(Outbreak="High",var="NPV2",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
-TP2/(TP2+FN2)
+(tmp <- TP2/(TP2+FN2))
+results[["SENS2"]] <- data.frame(Outbreak="High",var="Sensitivity2",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
-TN2/(TN2+FP2)
+(tmp <- TN2/(TN2+FP2))
+results[["SPEC2"]] <- data.frame(Outbreak="High",var="Specificity2",value=tmp)
 
+
+results <- rbindlist(results)
+results
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_vs_msis_pop50000.xlsx"))
 
 
 # Table showing all municipalities with population > 10 000
@@ -343,7 +368,6 @@ dataPop10000 <- mergedDataPop[pop>10000]
 # dataPop10000 <- mergedDataPop[pop>10000,c("location", "year", "week", "n", "s_status", "msis_outbreak", "pop")]
 
 nrow(dataPop10000)
-
 
 
 ## CALCULATIONS when pop > 10 000
@@ -357,7 +381,6 @@ TN1 <- nrow(dataPop10000[msis_outbreak==FALSE & s_status=="Normal"])
 FP1 <- nrow(dataPop10000[msis_outbreak==FALSE & s_status!="Normal"])
 # FALSE NEGATIVE= 
 FN1 <- nrow(dataPop10000[msis_outbreak==TRUE & s_status=="Normal"]) 
-
 
 
 # Level 2:  No outbreak=normal+medium / Outbreak=high
@@ -377,42 +400,56 @@ FN2 <- nrow(dataPop10000[msis_outbreak==TRUE & s_status!="High"])
 # sensitivity (TPR) =  TP/(TP+FN)
 # specificity (SPC) = TN/(TN+FP)
 
+
+results <- list()
 # LVL1
 # PPV = TP/TP+FP
-TP1/(TP1+FP1)
+(tmp <- TP1/(TP1+FP1))
+results[["PPV1"]] <- data.frame(Outbreak="Medium+High",var="PPV1",value=tmp)
 
 # NPV = TN/TN+FN
-TN1/(TN1+FN1)
+(tmp <- TN1/(TN1+FN1))
+results[["NPV1"]] <- data.frame(Outbreak="Medium+High",var="NPV1",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
-TP1/(TP1+FN1)
+(tmp <- TP1/(TP1+FN1))
+results[["SENS1"]] <- data.frame(Outbreak="Medium+High",var="Sensitivity1",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
-TN1/(TN1+FP1)
+(tmp <- TN1/(TN1+FP1))
+results[["SPEC1"]] <- data.frame(Outbreak="Medium+High",var="Specificity1",value=tmp)
 
 # LVL2
 # PPV = TP/TP+FP
-TP2/(TP2+FP2)
+(tmp <- TP2/(TP2+FP2))
+results[["PPV2"]] <- data.frame(Outbreak="High",var="PPV2",value=tmp)
 
 # NPV = TN/TN+FN
-TN2/(TN2+FN2)
+(tmp <- TN2/(TN2+FN2))
+results[["NPV2"]] <- data.frame(Outbreak="High",var="NPV2",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
-TP2/(TP2+FN2)
+(tmp <- TP2/(TP2+FN2))
+results[["SENS2"]] <- data.frame(Outbreak="High",var="Sensitivity2",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
-TN2/(TN2+FP2)
+(tmp <- TN2/(TN2+FP2))
+results[["SPEC2"]] <- data.frame(Outbreak="High",var="Specificity2",value=tmp)
+
+
+results <- rbindlist(results)
+results
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_vs_msis_pop10000.xlsx"))
 
 
 ## PREPARE VESUV #############################
 
 # read in the raw data
 v <- data.table(readxl::read_excel("data_raw/Vesuv_2007_2017.xlsx"))
+nrow(v)
 
 # make a "municip" variable so that it is the same as in "mergingDataV"
 v[,municip:=sprintf("municip%s",KommuneNr)]
-
-nrow(v)
 
 # add week numbers, must have "lubridate" 
 library(lubridate)
@@ -430,10 +467,8 @@ vInstitution <- vNull[Type!="Helseinstitusjon"]
 
 nrow(vInstitution)
 
-
 # Create column called vesuv_outbreak, with all <- 1
 vInstitution$vesuv_outbreak<-1
-
 
 # delete columns, so only location, year, week and vesuv_outbreak is left 
 vFull<- vInstitution
@@ -449,7 +484,6 @@ nrow(vFull)
 # read in a "merging" dataset that says "which kommune goes to a different kommune"
 mergingData <- GenNorwayMunicipMerging()
 
-
 # find out who is missing
 data2 <- merge(vFull,mergingData,by.x=c("municip","year"),by.y=c("municip","year"),all.x=T)
 data2[is.na(municipEnd)]
@@ -457,7 +491,6 @@ data2[is.na(municipEnd)]
 xtabs(~data2[is.na(municipEnd)]$municip)
 xtabs(~data2[is.na(municipEnd)]$municip+data2[is.na(municipEnd)]$year)
 #end
-
 
 # merge in the dataset that says "kommune X -> kommune Y"
 nrow(vFull) # number of rows in the dataset before merging
@@ -469,7 +502,6 @@ vFull[,municip:=NULL]
 
 setnames(vFull,"municipEnd","location")
 
-
 setcolorder(vFull, c("location", "year", "week", "vesuv_outbreak"))
 
 
@@ -478,7 +510,7 @@ setcolorder(vFull, c("location", "year", "week", "vesuv_outbreak"))
 
 vFull # Vesuv dataset
 nrow(vFull)
-mergedDataPop # msis and Sykdomspulsen + popukation 
+mergedDataPop # msis and Sykdomspulsen + population 
 nrow(mergedDataPop)
 
 
@@ -501,8 +533,8 @@ fullData
 # You will then notice that A LOT of the data didn’t merge (as you only have 1400 rows for vesuv). 
 # This means that everything that *didn’t* merge, is NOT an outbreak. So we fill in that information:
   
-fullData[is.na(vesuv_outbreak),vesuv_outbreak:=1]
-nrow(fullData)
+fullData[is.na(vesuv_outbreak),vesuv_outbreak:=0] ### I have put in =0 instead of =1, is this wrong?
+fullData
 
 
 # delete columns
@@ -513,55 +545,184 @@ setcolorder(fullData, c("location","locationName", "pop", "year", "week", "vesuv
 fullData
 
 
+fullData[is.na(vesuv_outbreak),vesuv_outbreak:=0]
+
+# take a look at the data examples
+fullData[location=="municip0301" & week==3]
+fullData[location=="municip5054" & week==30]
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-# CALCULATIONS SP + M + V
-## NEED TO FILL IN RIGHT DATA SETS, AND RIGHT ARGUMENTS
-
-# EX 
-# TRUE POSITIVE= 
-# TP1 <- nrow(fullData[(vesuv==1 or msis_outbreak==TRUE) & s_status!="Normal"])
-
+### CALCULTIONS SYKDOMSPULSEN VS VESUV (GOLD STANDARD)
 
 
 # Level 1:   No outbreak=normal / Outbreak=Medium+High
 # TRUE POSITIVE= 
-TP1 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status!="Normal"])
-# TRUE NEGATIVE= 
-TN1 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status=="Normal"]) 
-# FALSE POSITIVE= 
-FP1 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status!="Normal"])
-# FALSE NEGATIVE= 
-FN1 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status=="Normal"]) 
+TP1 <- nrow(fullData[vesuv_outbreak==1 & s_status!="Normal"])
 
+# TRUE NEGATIVE= 
+TN1 <- nrow(fullData[vesuv_outbreak==0 & s_status=="Normal"]) 
+# FALSE POSITIVE= 
+FP1 <- nrow(fullData[vesuv_outbreak==0 & s_status!="Normal"])
+# FALSE NEGATIVE= 
+FN1 <- nrow(fullData[vesuv_outbreak==1 & s_status=="Normal"]) 
 
 
 # Level 2:  No outbreak=normal+medium / Outbreak=high
 # TRUE POSITIVE= 
-TP2 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status=="High"])
+TP2 <- nrow(fullData[vesuv_outbreak==1 & s_status=="High"])
 # TRUE NEGATIVE= 
-TN2 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status!="High"])
+TN2 <- nrow(fullData[vesuv_outbreak==0 & s_status!="High"])
 # FALSE POSITIVE= 
-FP2 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status=="High"])
+FP2 <- nrow(fullData[vesuv_outbreak==0 & s_status=="High"])
 # FALSE NEGATIVE= 
-FN2 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status!="High"])
+FN2 <- nrow(fullData[vesuv_outbreak==1 & s_status!="High"])
+
+
+# CALCULATE:
+# PPV = TP/TP+FP
+# NPV = TN/TN+FN
+# sensitivity (TPR) =  TP/(TP+FN)
+# specificity (SPC) = TN/(TN+FP)
+
+results <- list()
+# LVL1
+# PPV = TP/TP+FP
+(tmp <- TP1/(TP1+FP1))
+results[["PPV1"]] <- data.frame(Outbreak="Medium+High",var="PPV1",value=tmp)
+
+# NPV = TN/TN+FN
+(tmp <- TN1/(TN1+FN1))
+results[["NPV1"]] <- data.frame(Outbreak="Medium+High",var="NPV1",value=tmp)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+(tmp <- TP1/(TP1+FN1))
+results[["SENS1"]] <- data.frame(Outbreak="Medium+High",var="Sensitivity1",value=tmp)
+
+# specificity (SPC) = TN/(TN+FP)
+(tmp <- TN1/(TN1+FP1))
+results[["SPEC1"]] <- data.frame(Outbreak="Medium+High",var="Specificity1",value=tmp)
+
+# LVL2
+# PPV = TP/TP+FP
+(tmp <- TP2/(TP2+FP2))
+results[["PPV2"]] <- data.frame(Outbreak="High",var="PPV2",value=tmp)
+
+# NPV = TN/TN+FN
+(tmp <- TN2/(TN2+FN2))
+results[["NPV2"]] <- data.frame(Outbreak="High",var="NPV2",value=tmp)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+(tmp <- TP2/(TP2+FN2))
+results[["SENS2"]] <- data.frame(Outbreak="High",var="Sensitivity2",value=tmp)
+
+# specificity (SPC) = TN/(TN+FP)
+(tmp <- TN2/(TN2+FP2))
+results[["SPEC2"]] <- data.frame(Outbreak="High",var="Specificity2",value=tmp)
+
+
+results <- rbindlist(results)
+results
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_vs_vesuv.xlsx"))
 
 
 
 
+## CALCULATIONS when pop > 5000
+
+fullData5000 <- fullData[pop>5000]
+nrow(fullData5000)
+
+
+# Level 1:   No outbreak=normal / Outbreak=Medium+High
+# TRUE POSITIVE= 
+TP1 <- nrow(fullData5000[vesuv_outbreak==1 & s_status!="Normal"])
+# TRUE NEGATIVE= 
+TN1 <- nrow(fullData5000[vesuv_outbreak==0 & s_status=="Normal"]) 
+# FALSE POSITIVE= 
+FP1 <- nrow(fullData5000[vesuv_outbreak==0 & s_status!="Normal"])
+# FALSE NEGATIVE= 
+FN1 <- nrow(fullData5000[vesuv_outbreak==1 & s_status=="Normal"]) 
+
+
+# Level 2:  No outbreak=normal+medium / Outbreak=high
+# TRUE POSITIVE= 
+TP2 <- nrow(fullData5000[vesuv_outbreak==1 & s_status=="High"])
+# TRUE NEGATIVE= 
+TN2 <- nrow(fullData5000[vesuv_outbreak==0 & s_status!="High"])
+# FALSE POSITIVE= 
+FP2 <- nrow(fullData5000[vesuv_outbreak==0 & s_status=="High"])
+# FALSE NEGATIVE= 
+FN2 <- nrow(fullData5000[vesuv_outbreak==1 & s_status!="High"])
+
+
+results <- list()
+# LVL1
+# PPV = TP/TP+FP
+(tmp <- TP1/(TP1+FP1))
+results[["PPV1"]] <- data.frame(Outbreak="Medium+High",var="PPV1",value=tmp)
+
+# NPV = TN/TN+FN
+(tmp <- TN1/(TN1+FN1))
+results[["NPV1"]] <- data.frame(Outbreak="Medium+High",var="NPV1",value=tmp)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+(tmp <- TP1/(TP1+FN1))
+results[["SENS1"]] <- data.frame(Outbreak="Medium+High",var="Sensitivity1",value=tmp)
+
+# specificity (SPC) = TN/(TN+FP)
+(tmp <- TN1/(TN1+FP1))
+results[["SPEC1"]] <- data.frame(Outbreak="Medium+High",var="Specificity1",value=tmp)
+
+# LVL2
+# PPV = TP/TP+FP
+(tmp <- TP2/(TP2+FP2))
+results[["PPV2"]] <- data.frame(Outbreak="High",var="PPV2",value=tmp)
+
+# NPV = TN/TN+FN
+(tmp <- TN2/(TN2+FN2))
+results[["NPV2"]] <- data.frame(Outbreak="High",var="NPV2",value=tmp)
+
+# sensitivity (TPR) =  TP/(TP+FN)
+(tmp <- TP2/(TP2+FN2))
+results[["SENS2"]] <- data.frame(Outbreak="High",var="Sensitivity2",value=tmp)
+
+# specificity (SPC) = TN/(TN+FP)
+(tmp <- TN2/(TN2+FP2))
+results[["SPEC2"]] <- data.frame(Outbreak="High",var="Specificity2",value=tmp)
+
+
+results <- rbindlist(results)
+results
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_vs_vesuv_pop5000.xlsx"))
+
+
+## CALCULATIONS when pop > 50 000
+
+fullData50000 <- fullData[pop>50000]
+nrow(fullData50000)
+
+
+# Level 1:   No outbreak=normal / Outbreak=Medium+High
+# TRUE POSITIVE= 
+TP1 <- nrow(fullData50000[vesuv_outbreak==1 & s_status!="Normal"])
+# TRUE NEGATIVE= 
+TN1 <- nrow(fullData50000[vesuv_outbreak==0 & s_status=="Normal"]) 
+# FALSE POSITIVE= 
+FP1 <- nrow(fullData50000[vesuv_outbreak==0 & s_status!="Normal"])
+# FALSE NEGATIVE= 
+FN1 <- nrow(fullData50000[vesuv_outbreak==1 & s_status=="Normal"]) 
+
+
+# Level 2:  No outbreak=normal+medium / Outbreak=high
+# TRUE POSITIVE= 
+TP2 <- nrow(fullData50000[vesuv_outbreak==1 & s_status=="High"])
+# TRUE NEGATIVE= 
+TN2 <- nrow(fullData50000[vesuv_outbreak==0 & s_status!="High"])
+# FALSE POSITIVE= 
+FP2 <- nrow(fullData50000[vesuv_outbreak==0 & s_status=="High"])
+# FALSE NEGATIVE= 
+FN2 <- nrow(fullData50000[vesuv_outbreak==1 & s_status!="High"])
 
 
 
@@ -571,158 +732,309 @@ FN2 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status!="High"])
 # sensitivity (TPR) =  TP/(TP+FN)
 # specificity (SPC) = TN/(TN+FP)
 
+
+results <- list()
 # LVL1
 # PPV = TP/TP+FP
-TP1/(TP1+FP1)
+(tmp <- TP1/(TP1+FP1))
+results[["PPV1"]] <- data.frame(Outbreak="Medium+High",var="PPV1",value=tmp)
 
 # NPV = TN/TN+FN
-TN1/(TN1+FN1)
+(tmp <- TN1/(TN1+FN1))
+results[["NPV1"]] <- data.frame(Outbreak="Medium+High",var="NPV1",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
-TP1/(TP1+FN1)
+(tmp <- TP1/(TP1+FN1))
+results[["SENS1"]] <- data.frame(Outbreak="Medium+High",var="Sensitivity1",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
-TN1/(TN1+FP1)
+(tmp <- TN1/(TN1+FP1))
+results[["SPEC1"]] <- data.frame(Outbreak="Medium+High",var="Specificity1",value=tmp)
 
 # LVL2
 # PPV = TP/TP+FP
-TP2/(TP2+FP2)
+(tmp <- TP2/(TP2+FP2))
+results[["PPV2"]] <- data.frame(Outbreak="High",var="PPV2",value=tmp)
 
 # NPV = TN/TN+FN
-TN2/(TN2+FN2)
+(tmp <- TN2/(TN2+FN2))
+results[["NPV2"]] <- data.frame(Outbreak="High",var="NPV2",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
-TP2/(TP2+FN2)
+(tmp <- TP2/(TP2+FN2))
+results[["SENS2"]] <- data.frame(Outbreak="High",var="Sensitivity2",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
-TN2/(TN2+FP2)
+(tmp <- TN2/(TN2+FP2))
+results[["SPEC2"]] <- data.frame(Outbreak="High",var="Specificity2",value=tmp)
 
 
+results <- rbindlist(results)
+results
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_vs_vesuv_pop50000.xlsx"))
 
 
+## CALCULATIONS when pop > 10 000
 
+fullData10000 <- fullData[pop>10000]
+nrow(fullData10000)
 
 
+# Level 1:   No outbreak=normal / Outbreak=Medium+High
+# TRUE POSITIVE= 
+TP1 <- nrow(fullData10000[vesuv_outbreak==1 & s_status!="Normal"])
+# TRUE NEGATIVE= 
+TN1 <- nrow(fullData10000[vesuv_outbreak==0 & s_status=="Normal"]) 
+# FALSE POSITIVE= 
+FP1 <- nrow(fullData10000[vesuv_outbreak==0 & s_status!="Normal"])
+# FALSE NEGATIVE= 
+FN1 <- nrow(fullData10000[vesuv_outbreak==1 & s_status=="Normal"]) 
 
 
+# Level 2:  No outbreak=normal+medium / Outbreak=high
+# TRUE POSITIVE= 
+TP2 <- nrow(fullData10000[vesuv_outbreak==1 & s_status=="High"])
+# TRUE NEGATIVE= 
+TN2 <- nrow(fullData10000[vesuv_outbreak==0 & s_status!="High"])
+# FALSE POSITIVE= 
+FP2 <- nrow(fullData10000[vesuv_outbreak==0 & s_status=="High"])
+# FALSE NEGATIVE= 
+FN2 <- nrow(fullData10000[vesuv_outbreak==1 & s_status!="High"])
 
 
+# CALCULATE:
+# PPV = TP/TP+FP
+# NPV = TN/TN+FN
+# sensitivity (TPR) =  TP/(TP+FN)
+# specificity (SPC) = TN/(TN+FP)
 
 
+results <- list()
+# LVL1
+# PPV = TP/TP+FP
+(tmp <- TP1/(TP1+FP1))
+results[["PPV1"]] <- data.frame(Outbreak="Medium+High",var="PPV1",value=tmp)
 
+# NPV = TN/TN+FN
+(tmp <- TN1/(TN1+FN1))
+results[["NPV1"]] <- data.frame(Outbreak="Medium+High",var="NPV1",value=tmp)
 
+# sensitivity (TPR) =  TP/(TP+FN)
+(tmp <- TP1/(TP1+FN1))
+results[["SENS1"]] <- data.frame(Outbreak="Medium+High",var="Sensitivity1",value=tmp)
 
+# specificity (SPC) = TN/(TN+FP)
+(tmp <- TN1/(TN1+FP1))
+results[["SPEC1"]] <- data.frame(Outbreak="Medium+High",var="Specificity1",value=tmp)
 
+# LVL2
+# PPV = TP/TP+FP
+(tmp <- TP2/(TP2+FP2))
+results[["PPV2"]] <- data.frame(Outbreak="High",var="PPV2",value=tmp)
 
+# NPV = TN/TN+FN
+(tmp <- TN2/(TN2+FN2))
+results[["NPV2"]] <- data.frame(Outbreak="High",var="NPV2",value=tmp)
 
+# sensitivity (TPR) =  TP/(TP+FN)
+(tmp <- TP2/(TP2+FN2))
+results[["SENS2"]] <- data.frame(Outbreak="High",var="Sensitivity2",value=tmp)
 
+# specificity (SPC) = TN/(TN+FP)
+(tmp <- TN2/(TN2+FP2))
+results[["SPEC2"]] <- data.frame(Outbreak="High",var="Specificity2",value=tmp)
 
 
+results <- rbindlist(results)
+results
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_vs_vesuv_pop10000.xlsx"))
 
 
 
 
+### CALCULTIONS MSIS VS VESUV (GOLD STANDARD)
 
 
+# No outbreak= 0 / Outbreak= 1
+# TRUE POSITIVE= 
+TP1 <- nrow(fullData[vesuv_outbreak==1 & msis_outbreak!="FALSE"])
 
+# TRUE NEGATIVE= 
+TN1 <- nrow(fullData[vesuv_outbreak==0 & msis_outbreak=="FALSE"]) 
+# FALSE POSITIVE= 
+FP1 <- nrow(fullData[vesuv_outbreak==0 & msis_outbreak!="FALSE"])
+# FALSE NEGATIVE= 
+FN1 <- nrow(fullData[vesuv_outbreak==1 & msis_outbreak=="FALSE"]) 
 
 
+# CALCULATE:
+# PPV = TP/TP+FP
+# NPV = TN/TN+FN
+# sensitivity (TPR) =  TP/(TP+FN)
+# specificity (SPC) = TN/(TN+FP)
 
+results <- list()
+# LVL1
+# PPV = TP/TP+FP
+(tmp <- TP1/(TP1+FP1))
+results[["PPV"]] <- data.frame(Outbreak="1",var="PPV",value=tmp)
 
+# NPV = TN/TN+FN
+(tmp <- TN1/(TN1+FN1))
+results[["NPV"]] <- data.frame(Outbreak="1",var="NPV",value=tmp)
 
+# sensitivity (TPR) =  TP/(TP+FN)
+(tmp <- TP1/(TP1+FN1))
+results[["SENS"]] <- data.frame(Outbreak="1",var="Sensitivity",value=tmp)
 
+# specificity (SPC) = TN/(TN+FP)
+(tmp <- TN1/(TN1+FP1))
+results[["SPEC"]] <- data.frame(Outbreak="1",var="Specificity",value=tmp)
 
+results <- rbindlist(results)
+results
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"msis_vs_vesuv.xlsx"))
 
 
 
+## CALCULATIONS when pop > 5000
 
-########################################################
-##
-##        Opprette fiktiv tabell som inneholder alle kommuner, ?r og uker
-##
-##########################################################
+fullData5000 <- fullData[pop>5000]
+nrow(fullData5000)
 
-k.ant <- 435
-aa.ant <- 10
-u.ant <- 53
 
-komm <- NULL
-for(i in 1:k.ant)
-  komm <- rbind(komm, rep(i, aa.ant*u.ant))
-komm <- c(t(komm))
+# No outbreak= 0 / Outbreak= 1
+# TRUE POSITIVE= 
+TP1 <- nrow(fullData5000[vesuv_outbreak==1 & msis_outbreak!="FALSE"])
+# TRUE NEGATIVE= 
+TN1 <- nrow(fullData5000[vesuv_outbreak==0 & msis_outbreak=="FALSE"]) 
+# FALSE POSITIVE= 
+FP1 <- nrow(fullData5000[vesuv_outbreak==0 & msis_outbreak!="FALSE"])
+# FALSE NEGATIVE= 
+FN1 <- nrow(fullData5000[vesuv_outbreak==1 & msis_outbreak=="FALSE"]) 
 
-aar <- NULL
-for(i in 1:k.ant)
-  for(j in 1:aa.ant)
-    aar <- rbind(aar, rep(j, u.ant))
-aar <- c(t(aar))
 
-uke <- rep(rep(1:u.ant), k.ant*aa.ant)
+# CALCULATE:
+# PPV = TP/TP+FP
+# NPV = TN/TN+FN
+# sensitivity (TPR) =  TP/(TP+FN)
+# specificity (SPC) = TN/(TN+FP)
 
-hdata <- data.frame(komm = komm, aar = aar, uke = uke, antall = rep(0, k.ant*aa.ant*u.ant))
+results <- list()
+# LVL1
+# PPV = TP/TP+FP
+(tmp <- TP1/(TP1+FP1))
+results[["PPV"]] <- data.frame(Outbreak="1",var="PPV",value=tmp)
 
-head(hdata)
+# NPV = TN/TN+FN
+(tmp <- TN1/(TN1+FN1))
+results[["NPV"]] <- data.frame(Outbreak="1",var="NPV",value=tmp)
 
-#################################################
-##
-##   Hente inn MSIS tabell 
-##
-#########################################################
+# sensitivity (TPR) =  TP/(TP+FN)
+(tmp <- TP1/(TP1+FN1))
+results[["SENS"]] <- data.frame(Outbreak="1",var="Sensitivity",value=tmp)
 
-library(xlsx)
-msis<-read.xlsx("C:/Users/Hanne/Documents/NMBU/Masteroppgave/Analayser i R/18.06.26/MSIS_07_17_komm_aar_uke_excel.xlsx",1)
+# specificity (SPC) = TN/(TN+FP)
+(tmp <- TN1/(TN1+FP1))
+results[["SPEC"]] <- data.frame(Outbreak="1",var="Specificity",value=tmp)
 
+results <- rbindlist(results)
+results
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"msis_vs_vesuv_pop5000.xlsx"))
 
-## Legge til kolonne  kalt "antall", og agregere pr uke ###############
 
-msis$antall<-1
 
-MSIS <- aggregate(msis$antall, msis[, c("komm", "aar", "uke")],FUN=sum) 
 
+## CALCULATIONS when pop > 50 000
 
-##################################################
-##
-##   Gjenst?r: Finne en kode / snutt som fletter MSIS og fiktiv tabell (hdata) slik 
-##    at den koblede tabellen innholder alle komm, ?r og uker, med antall fra MSIS
-##
-##################################################
+fullData50000 <- fullData[pop>50000]
+nrow(fullData50000)
 
 
-## Datasett 1: MSIS
-## Datasett 2: hdata
+# No outbreak= 0 / Outbreak= 1
+# TRUE POSITIVE= 
+TP1 <- nrow(fullData50000[vesuv_outbreak==1 & msis_outbreak!="FALSE"])
+# TRUE NEGATIVE= 
+TN1 <- nrow(fullData50000[vesuv_outbreak==0 & msis_outbreak=="FALSE"]) 
+# FALSE POSITIVE= 
+FP1 <- nrow(fullData50000[vesuv_outbreak==0 & msis_outbreak!="FALSE"])
+# FALSE NEGATIVE= 
+FN1 <- nrow(fullData50000[vesuv_outbreak==1 & msis_outbreak=="FALSE"]) 
 
-## fors?ker snutt under, men f?r den ikke til ? fungere
-for(i in 1:dim(MSIS)[[1]])
-  
-  hdata[hdata$komm == MSIS[i, ]$komm & hdata$aar == MSIS[i, ]$aar & hdata$uke == MSIS[i, ]$uke, ]$antall <- MSIS[i, ]$antall
 
+# CALCULATE:
+# PPV = TP/TP+FP
+# NPV = TN/TN+FN
+# sensitivity (TPR) =  TP/(TP+FN)
+# specificity (SPC) = TN/(TN+FP)
 
+results <- list()
+# LVL1
+# PPV = TP/TP+FP
+(tmp <- TP1/(TP1+FP1))
+results[["PPV"]] <- data.frame(Outbreak="1",var="PPV",value=tmp)
 
+# NPV = TN/TN+FN
+(tmp <- TN1/(TN1+FN1))
+results[["NPV"]] <- data.frame(Outbreak="1",var="NPV",value=tmp)
 
+# sensitivity (TPR) =  TP/(TP+FN)
+(tmp <- TP1/(TP1+FN1))
+results[["SENS"]] <- data.frame(Outbreak="1",var="Sensitivity",value=tmp)
 
+# specificity (SPC) = TN/(TN+FP)
+(tmp <- TN1/(TN1+FP1))
+results[["SPEC"]] <- data.frame(Outbreak="1",var="Specificity",value=tmp)
 
-## fors?ker ved ? koble to tabeller, outer join
+results <- rbindlist(results)
+results
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"msis_vs_vesuv_pop50000.xlsx"))
 
-koblet<-merge(hdata,MSIS, by=c("komm", "aar", "uke"),all=TRUE)
-koblet
 
-##  Endre NA til 0 i msis tabell
 
-koblet[is.na(koblet)]<- 0
-koblet
+## CALCULATIONS when pop > 10 000
 
-## legg sammen to kolonner i en ny kolonne
+fullData10000 <- fullData[pop>10000]
+nrow(fullData10000)
 
-koblet$Antall<-koblet$antall.x+koblet$antall.y
-koblet
+# No outbreak= 0 / Outbreak= 1
+# TRUE POSITIVE= 
+TP1 <- nrow(fullData10000[vesuv_outbreak==1 & msis_outbreak!="FALSE"])
+# TRUE NEGATIVE= 
+TN1 <- nrow(fullData10000[vesuv_outbreak==0 & msis_outbreak=="FALSE"]) 
+# FALSE POSITIVE= 
+FP1 <- nrow(fullData10000[vesuv_outbreak==0 & msis_outbreak!="FALSE"])
+# FALSE NEGATIVE= 
+FN1 <- nrow(fullData10000[vesuv_outbreak==1 & msis_outbreak=="FALSE"]) 
 
-###### dette medf?rer at alle komm, aar og uker som ikke inneholder verdi>0 forsvinner.
 
+# CALCULATE:
+# PPV = TP/TP+FP
+# NPV = TN/TN+FN
+# sensitivity (TPR) =  TP/(TP+FN)
+# specificity (SPC) = TN/(TN+FP)
 
+results <- list()
+# LVL1
+# PPV = TP/TP+FP
+(tmp <- TP1/(TP1+FP1))
+results[["PPV"]] <- data.frame(Outbreak="1",var="PPV",value=tmp)
 
+# NPV = TN/TN+FN
+(tmp <- TN1/(TN1+FN1))
+results[["NPV"]] <- data.frame(Outbreak="1",var="NPV",value=tmp)
 
+# sensitivity (TPR) =  TP/(TP+FN)
+(tmp <- TP1/(TP1+FN1))
+results[["SENS"]] <- data.frame(Outbreak="1",var="Sensitivity",value=tmp)
 
+# specificity (SPC) = TN/(TN+FP)
+(tmp <- TN1/(TN1+FP1))
+results[["SPEC"]] <- data.frame(Outbreak="1",var="Specificity",value=tmp)
 
+results <- rbindlist(results)
+results
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"msis_vs_vesuv_pop10000.xlsx"))
 
 
 
@@ -738,51 +1050,26 @@ koblet
 
 
 
-##################################################
-##
-##    Algoritme for ? finne signal
-##
-##################################################
 
-## Finne ukesnitt for hver kommune
 
-ukesnitt <- NULL
-for(k in 1:k.ant){
-  this.uke <- NULL
-  for (i in 1:u.ant){
-    this.uke <- c(this.uke, mean(hdata[komm == k & uke == i, ]$antall))
-  }
-  ukesnitt <- rbind(ukesnitt, this.uke)
-}
 
-## beregner standardavvik for all kommuner og for alle ?r
 
-aaravvik <- NULL
-for(k in 1:k.ant){
-  this.avvik <- NULL
-  for(i in 1:aa.ant){
-    this.avvik <- c(this.avvik, sqrt(var(hdata[komm == k & aar == i, ]$antall)))
-  }
-  aaravvik <- cbind(aaravvik, this.avvik)
-}
 
-#########################################################
-##
-##      Kjernefunksjon: Finne signal
-##
-#########################################################
 
 
-antsigma <- 5
 
-for (k in 1:k.ant){
-  for (i in 1:aa.ant){
-    for (j in 1:u.ant){
-      if(hdata[komm == k & aar == i & uke == j,]$antall > ukesnitt[k, j] + antsigma * aaravvik[i, k])
-        print(c("Signal for kommune ", k, " Aar: ", i, "uke: ", j, "Antall: ",hdata[komm == k & aar == i & uke == j,]$antall ))
-    }
-  }
-}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
