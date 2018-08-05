@@ -149,36 +149,36 @@ results <- list()
 # LVL1
 # PPV = TP/TP+FP
 (tmp <- TP1/(TP1+FP1))
-results[["PPV1"]] <- data.frame(Outbreak="Medium+High",var="PPV1",value=tmp)
+results[["PPV1"]] <- data.frame(Comp="SPvsMSIS(Gold)",Outbreak="Medium+High",var="PPV1",value=tmp)
 
 # NPV = TN/TN+FN
 (tmp <- TN1/(TN1+FN1))
-results[["NPV1"]] <- data.frame(Outbreak="Medium+High",var="NPV1",value=tmp)
+results[["NPV1"]] <- data.frame(Comp="SPvsMSIS(Gold)",Outbreak="Medium+High",var="NPV1",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
 (tmp <- TP1/(TP1+FN1))
-results[["SENS1"]] <- data.frame(Outbreak="Medium+High",var="Sensitivity1",value=tmp)
+results[["SENS1"]] <- data.frame(Comp="SPvsMSIS(Gold)",Outbreak="Medium+High",var="Sensitivity1",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
 (tmp <- TN1/(TN1+FP1))
-results[["SPEC1"]] <- data.frame(Outbreak="Medium+High",var="Specificity1",value=tmp)
+results[["SPEC1"]] <- data.frame(Comp="SPvsMSIS(Gold)",Outbreak="Medium+High",var="Specificity1",value=tmp)
 
 # LVL2
 # PPV = TP/TP+FP
 (tmp <- TP2/(TP2+FP2))
-results[["PPV2"]] <- data.frame(Outbreak="High",var="PPV2",value=tmp)
+results[["PPV2"]] <- data.frame(Comp="SPvsMSIS(Gold)",Outbreak="High",var="PPV2",value=tmp)
 
 # NPV = TN/TN+FN
 (tmp <- TN2/(TN2+FN2))
-results[["NPV2"]] <- data.frame(Outbreak="High",var="NPV2",value=tmp)
+results[["NPV2"]] <- data.frame(Comp="SPvsMSIS(Gold)",Outbreak="High",var="NPV2",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
 (tmp <- TP2/(TP2+FN2))
-results[["SENS2"]] <- data.frame(Outbreak="High",var="Sensitivity2",value=tmp)
+results[["SENS2"]] <- data.frame(Comp="SPvsMSIS(Gold)",Outbreak="High",var="Sensitivity2",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
 (tmp <- TN2/(TN2+FP2))
-results[["SPEC2"]] <- data.frame(Outbreak="High",var="Specificity2",value=tmp)
+results[["SPEC2"]] <- data.frame(Comp="SPvsMSIS(Gold)",Outbreak="High",var="Specificity2",value=tmp)
 
 
 results <- rbindlist(results)
@@ -855,7 +855,7 @@ openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_
 ### CALCULTIONS MSIS VS VESUV (GOLD STANDARD)
 
 
-# No outbreak= 0 / Outbreak= 1
+# No outbreak= FALSE / Outbreak= TRUE
 # TRUE POSITIVE= 
 TP1 <- nrow(fullData[vesuv_outbreak==1 & msis_outbreak!="FALSE"])
 
@@ -877,19 +877,19 @@ results <- list()
 # LVL1
 # PPV = TP/TP+FP
 (tmp <- TP1/(TP1+FP1))
-results[["PPV"]] <- data.frame(Outbreak="1",var="PPV",value=tmp)
+results[["PPV"]] <- data.frame(Outbreak="TRUE",var="PPV",value=tmp)
 
 # NPV = TN/TN+FN
 (tmp <- TN1/(TN1+FN1))
-results[["NPV"]] <- data.frame(Outbreak="1",var="NPV",value=tmp)
+results[["NPV"]] <- data.frame(Outbreak="TRUE",var="NPV",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
 (tmp <- TP1/(TP1+FN1))
-results[["SENS"]] <- data.frame(Outbreak="1",var="Sensitivity",value=tmp)
+results[["SENS"]] <- data.frame(Outbreak="TRUE",var="Sensitivity",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
 (tmp <- TN1/(TN1+FP1))
-results[["SPEC"]] <- data.frame(Outbreak="1",var="Specificity",value=tmp)
+results[["SPEC"]] <- data.frame(Outbreak="TRUE",var="Specificity",value=tmp)
 
 results <- rbindlist(results)
 results
@@ -903,7 +903,7 @@ fullData5000 <- fullData[pop>5000]
 nrow(fullData5000)
 
 
-# No outbreak= 0 / Outbreak= 1
+# No outbreak= FALSE / Outbreak= TRUE
 # TRUE POSITIVE= 
 TP1 <- nrow(fullData5000[vesuv_outbreak==1 & msis_outbreak!="FALSE"])
 # TRUE NEGATIVE= 
@@ -924,19 +924,19 @@ results <- list()
 # LVL1
 # PPV = TP/TP+FP
 (tmp <- TP1/(TP1+FP1))
-results[["PPV"]] <- data.frame(Outbreak="1",var="PPV",value=tmp)
+results[["PPV"]] <- data.frame(Outbreak="TRUE",var="PPV",value=tmp)
 
 # NPV = TN/TN+FN
 (tmp <- TN1/(TN1+FN1))
-results[["NPV"]] <- data.frame(Outbreak="1",var="NPV",value=tmp)
+results[["NPV"]] <- data.frame(Outbreak="TRUE",var="NPV",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
 (tmp <- TP1/(TP1+FN1))
-results[["SENS"]] <- data.frame(Outbreak="1",var="Sensitivity",value=tmp)
+results[["SENS"]] <- data.frame(Outbreak="TRUE",var="Sensitivity",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
 (tmp <- TN1/(TN1+FP1))
-results[["SPEC"]] <- data.frame(Outbreak="1",var="Specificity",value=tmp)
+results[["SPEC"]] <- data.frame(Outbreak="TRUE",var="Specificity",value=tmp)
 
 results <- rbindlist(results)
 results
@@ -951,7 +951,7 @@ fullData50000 <- fullData[pop>50000]
 nrow(fullData50000)
 
 
-# No outbreak= 0 / Outbreak= 1
+# No outbreak= FALSE / Outbreak= TRUE
 # TRUE POSITIVE= 
 TP1 <- nrow(fullData50000[vesuv_outbreak==1 & msis_outbreak!="FALSE"])
 # TRUE NEGATIVE= 
@@ -972,19 +972,19 @@ results <- list()
 # LVL1
 # PPV = TP/TP+FP
 (tmp <- TP1/(TP1+FP1))
-results[["PPV"]] <- data.frame(Outbreak="1",var="PPV",value=tmp)
+results[["PPV"]] <- data.frame(Outbreak="TRUE",var="PPV",value=tmp)
 
 # NPV = TN/TN+FN
 (tmp <- TN1/(TN1+FN1))
-results[["NPV"]] <- data.frame(Outbreak="1",var="NPV",value=tmp)
+results[["NPV"]] <- data.frame(Outbreak="TRUE",var="NPV",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
 (tmp <- TP1/(TP1+FN1))
-results[["SENS"]] <- data.frame(Outbreak="1",var="Sensitivity",value=tmp)
+results[["SENS"]] <- data.frame(Outbreak="TRUE",var="Sensitivity",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
 (tmp <- TN1/(TN1+FP1))
-results[["SPEC"]] <- data.frame(Outbreak="1",var="Specificity",value=tmp)
+results[["SPEC"]] <- data.frame(Outbreak="TRUE",var="Specificity",value=tmp)
 
 results <- rbindlist(results)
 results
@@ -997,7 +997,7 @@ openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"msis_vs_vesuv_
 fullData10000 <- fullData[pop>10000]
 nrow(fullData10000)
 
-# No outbreak= 0 / Outbreak= 1
+# No outbreak= FALSE / Outbreak= TRUE
 # TRUE POSITIVE= 
 TP1 <- nrow(fullData10000[vesuv_outbreak==1 & msis_outbreak!="FALSE"])
 # TRUE NEGATIVE= 
@@ -1018,19 +1018,19 @@ results <- list()
 # LVL1
 # PPV = TP/TP+FP
 (tmp <- TP1/(TP1+FP1))
-results[["PPV"]] <- data.frame(Outbreak="1",var="PPV",value=tmp)
+results[["PPV"]] <- data.frame(Outbreak="TRUE",var="PPV",value=tmp)
 
 # NPV = TN/TN+FN
 (tmp <- TN1/(TN1+FN1))
-results[["NPV"]] <- data.frame(Outbreak="1",var="NPV",value=tmp)
+results[["NPV"]] <- data.frame(Outbreak="TRUE",var="NPV",value=tmp)
 
 # sensitivity (TPR) =  TP/(TP+FN)
 (tmp <- TP1/(TP1+FN1))
-results[["SENS"]] <- data.frame(Outbreak="1",var="Sensitivity",value=tmp)
+results[["SENS"]] <- data.frame(Outbreak="TRUE",var="Sensitivity",value=tmp)
 
 # specificity (SPC) = TN/(TN+FP)
 (tmp <- TN1/(TN1+FP1))
-results[["SPEC"]] <- data.frame(Outbreak="1",var="Specificity",value=tmp)
+results[["SPEC"]] <- data.frame(Outbreak="TRUE",var="Specificity",value=tmp)
 
 results <- rbindlist(results)
 results
