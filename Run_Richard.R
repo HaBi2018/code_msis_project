@@ -91,7 +91,6 @@ fullData[is.na(num),num:=0]
 nrow(fullData)
 
 #
-fullData[,numx1:=shift(num,n=1L,type="lead"),by=.(municip,uke)]
 fullData[,num1:=shift(num,n=1L,type="lag"),by=.(municip,uke)]
 fullData[,num2:=shift(num,n=2L,type="lag"),by=.(municip,uke)]
 fullData[,num3:=shift(num,n=3L,type="lag"),by=.(municip,uke)]
@@ -133,18 +132,53 @@ error=function(err){
   mergedData
 })
 
+# to aggregate
+#[row,column,by]
+#mergedData[year==2918,
+#           .(
+#             
+#           ),keyby=.(
+#             
+#           )]
+
+
+
+### GET YOUR FULL DATASET HERE
+# VESUV + POPULATION + MSIS + SYKDOMPULSEN
+
+### THEN DO SOME CORRELATION/GRAPHING ANALYSES
+
+## THEN DO THE PPV/SENS/NPV
+
+mergedData[,num_w_future1:=shift(num,n=1L,type="lead"),by=.(location)]
+mergedData[,num_w_past1:=shift(num,n=1L,type="lag"),by=.(location)]
+
+# take a look at the correlations
+#cor(mergedData$n,mergedData$numx1)
+
+mergedData[,season:=sprintf("%s/%s",year-1,year)]
+mergedData[week>26,season:=sprintf("%s/%s",year,year+1)]
+
 corr <- na.omit(mergedData[
   ,.(
-  corrminus1=cor(n,numx1),
-  corr0=cor(n,num),
-  corrplus1=cor(n,num1)
-),by=.(location,year)])
+    corr_past1=cor(n,num_w_past1),
+    corr0=cor(n,num),
+    corr_future1=cor(n,num_w_future1)
+  ),by=.(
+    location,season
+  )])
 
 corr[,.(
-  corrminus1=mean(corrminus1),
+  corr_past1=mean(corr_past1),
   corr0=mean(corr0),
-  corrplus1=mean(corrplus1)
-),keyby=.(year)]
+  corr_future1=mean(corr_future1)
+),keyby=.(season)]
+
+corr[,.(
+  corr_past1=mean(corr_past1),
+  corr0=mean(corr0),
+  corr_future1=mean(corr_future1)
+),keyby=.()]
 
 mean(corr$corrminus1)
 mean(corr$corr0)
@@ -181,41 +215,22 @@ corr[,.(
 #ICC::ICCbare("id","value",data=x)
 
 ## CALCULATIONS SP vs MSIS (gold)
-compVars <- c("msis_vs_sp")
-for(lag in -1:1) for(goldstandard in c("msis_outbreak","msis_outbreak2wks")) {
-  # Level 1:   No outbreak=normal / Outbreak=Medium+High
-  newMSISVar <- sprintf("%s_%s",goldstandard,stringr::str_replace(lag,"-","minus"))
-  newComparisonVar1 <- sprintf("SPthreshold2_vs_%s_%s",goldstandard,stringr::str_replace(lag,"-","minus"))
-  newComparisonVar2 <- sprintf("SPthreshold4_vs_%s_%s",goldstandard,stringr::str_replace(lag,"-","minus"))
-  compVars <- c(compVars,newComparisonVar1,newComparisonVar2)
-  
-  if(lag<0){
-    shiftType <- "lag"
-  } else {
-    shiftType <- "lead"
-  }
-  mergedData[,(newMSISVar):=shift(get(goldstandard),n=abs(lag),type=shiftType),by=location]
-  
-  mergedData[,(newComparisonVar1):=""]
-  mergedData[get(newMSISVar)==TRUE & s_status!="Normal", (newComparisonVar1):="TP"]
-  mergedData[get(newMSISVar)==FALSE & s_status=="Normal", (newComparisonVar1):="TN"]
-  mergedData[get(newMSISVar)==FALSE & s_status!="Normal", (newComparisonVar1):="FP"]
-  mergedData[get(newMSISVar)==TRUE & s_status=="Normal", (newComparisonVar1):="FN"]
-  
-  # Level 2:  No outbreak=normal+medium / Outbreak=high
-  
-  mergedData[,(newComparisonVar2):=""]
-  mergedData[get(newMSISVar)==TRUE & s_status=="High", (newComparisonVar2):="TP"]
-  mergedData[get(newMSISVar)==FALSE & s_status!="High", (newComparisonVar2):="TN"]
-  mergedData[get(newMSISVar)==FALSE & s_status=="High", (newComparisonVar2):="FP"]
-  mergedData[get(newMSISVar)==TRUE & s_status!="High", (newComparisonVar2):="FN"]
-}
 
-mergedData[,msis_vs_sp:=""]
-mergedData[s_status!="Normal" & msis_outbreak==TRUE, msis_vs_sp:="TP"]
-mergedData[s_status=="Normal" & msis_outbreak==FALSE, msis_vs_sp:="TN"]
-mergedData[s_status=="Normal" & msis_outbreak==TRUE, msis_vs_sp:="FP"]
-mergedData[s_status!="Normal" & msis_outbreak==FALSE, msis_vs_sp:="FN"]
+mergedData[,spthreshold2_vs_msis:=as.character(NA)]
+mergedData[msis_outbreak==TRUE & s_status!="Normal", spthreshold2_vs_msis:="TP"]
+mergedData[msis_outbreak==FALSE & s_status=="Normal", spthreshold2_vs_msis:="TN"]
+mergedData[msis_outbreak==FALSE & s_status!="Normal", spthreshold2_vs_msis:="FP"]
+mergedData[msis_outbreak==TRUE & s_status=="Normal", spthreshold2_vs_msis:="FN"]
+xtabs(~mergedData$spthreshold2_vs_msis)
+
+# Level 2:  No outbreak=normal+medium / Outbreak=high
+
+mergedData[,spthreshold4_vs_msis:=as.character(NA)]
+mergedData[msis_outbreak==TRUE & s_status=="High", spthreshold4_vs_msis:="TP"]
+mergedData[msis_outbreak==FALSE & s_status!="High", spthreshold4_vs_msis:="TN"]
+mergedData[msis_outbreak==FALSE & s_status=="High", spthreshold4_vs_msis:="FP"]
+mergedData[msis_outbreak==TRUE & s_status!="High", spthreshold4_vs_msis:="FN"]
+
 
 TP <- function(var){
   sum(var=="TP",na.rm=T)
@@ -250,13 +265,10 @@ SPEC <- function(var){
 }
 
 long <- melt.data.table(mergedData[,c(
-  "location","year","week","msis_threshold","n",compVars
+  "location","year","week","msis_threshold","n","spthreshold2_vs_msis","spthreshold4_vs_msis"
 ),with=F],id.vars = c("location","year","week","msis_threshold","n"))
 
-long[,msis_threshold_over_5:=msis_threshold>5]
-long[,n_over_5:=n>50]
-
-results <- long[msis_threshold_over_5==T & year>=2012,.(
+results <- long[,.(
   tp=TP(value),
   fn=FN(value),
   ppv=PPV(value),

@@ -111,8 +111,7 @@ mergedData <- merge(s, fullData,
                     by.x=c("location","year","week"),
                     by.y=c("municip","ar","uke"))
 nrow(mergedData)
-
-
+nrow(fullData)
 
 ## CALCULATIONS SP vs MSIS (gold)
 
@@ -526,8 +525,11 @@ nrow(vFullChar)
 str(mergedDataPop)
 nrow(mergedDataPop)
 
-fullData <- merge(mergedDataPop, vFullChar, by=c("location","year","week"), all.x=T)
+fullData <- merge(mergedDataPop, unique(vFullChar), by=c("location","year","week"), all.x=T)
 nrow(fullData)
+nrow(mergedDataPop)
+
+
 fullData
 
 # You will then notice that A LOT of the data didn’t merge (as you only have 1400 rows for vesuv). 
