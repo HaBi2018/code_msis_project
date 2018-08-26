@@ -134,7 +134,7 @@ error=function(err){
 
 # to aggregate
 #[row,column,by]
-#mergedData[year==2918,
+#mergedData[year==2018,
 #           .(
 #             
 #           ),keyby=.(
