@@ -12,8 +12,6 @@
 
 
 
-
-
 #############################################################
 ##  CORRELATION/GRAPHING ANALYSES                          ##
 #############################################################
@@ -42,8 +40,9 @@ error=function(err){
 
 
 
-### GET YOUR FULL DATASET HERE
-# VESUV + POPULATION + MSIS + SYKDOMPULSEN
+### GET YOUR FULL DATASET HERE (VESUV + POPULATION + MSIS + SYKDOMPULSEN)
+
+#read.csv(fullDataSVM,header=TRUE, sep=",", dec=".", fill=TRUE, comment.char=",)
 
 fullDataSVM
 
@@ -75,7 +74,7 @@ mergedData[,season:=sprintf("%s/%s",year-1,year)]
 mergedData[week>26,season:=sprintf("%s/%s",year,year+1)]
 
 
-results <- list()
+
 corr <- na.omit(mergedData[
   ,.(
     corr_past1=cor(n,num_w_past1),
@@ -134,6 +133,8 @@ corr[,.(
 #ICC::ICCbare("id","value",data=x)
 
 ## CALCULATIONS SP vs MSIS (gold)
+
+# Level 1:  No outbreak=normal / Outbreak=medium + high
 
 mergedData[,spthreshold2_vs_msis:=as.character(NA)]
 mergedData[msis_outbreak==TRUE & s_status!="Normal", spthreshold2_vs_msis:="TP"]
