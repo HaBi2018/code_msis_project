@@ -20,7 +20,7 @@ toPlot[,xValue:=1:nrow(toPlot)]
 
 library(ggplot2)
 
-long <- melt.data.table(toPlot,id.vars = c(year,week))
+long <- melt.data.table(toPlot,id.vars = c("year","week", "xValue"))
 
 p <- ggplot(data=long, mapping=aes(x=xValue,y=value))
 p <- p + geom_bar(stat="identity")
