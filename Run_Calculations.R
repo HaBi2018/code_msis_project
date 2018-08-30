@@ -68,7 +68,7 @@ mergedData[,num_w_future1:=shift(num,n=1L,type="lead"),by=.(location)]
 mergedData[,num_w_past1:=shift(num,n=1L,type="lag"),by=.(location)]
 
 # take a look at the correlations
-#cor(mergedData$s_n,mergedData$numx1)
+#cor(mergedData$n,mergedData$numx1)   GIVES ERRor - # supply both 'x' and 'y' or a matrix-like 'x'OR: 
 
 mergedData[,season:=sprintf("%s/%s",year-1,year)]
 mergedData[week>26,season:=sprintf("%s/%s",year,year+1)]
@@ -96,11 +96,11 @@ corr[,.(
   corr_future1=mean(corr_future1)
 ),keyby=.()]
 
-mean(corr$corrminus1)
+mean(corr$corr_past1)
 mean(corr$corr0)
-mean(corr$corrplus1)
+mean(corr$corr_future1)
 
-hist(corr$corr)
+hist(corr$corr0)
 
 mergedData[,fylke:=substr(location,1,9)]
 
@@ -128,9 +128,6 @@ corr[,.(
 
 
 
-#x <- melt.data.table(mergedData[year>=2014,c("n","num","location","year","week")],id.vars = c("location","year","week"))
-#x[,id:=paste0(location,year,week)]
-#ICC::ICCbare("id","value",data=x)
 
 ## CALCULATIONS SP vs MSIS (gold)
 
@@ -199,9 +196,9 @@ results <- long[,.(
 
 na.omit(results)
 
-openxlsx::write.xlsx(na.omit(results), file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_vs_msis_lags.xlsx"))
+openxlsx::write.xlsx(na.omit(results), file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_vs_msis_threshold.xlsx"))
 
-xtabs(~mergedData$SP_vs_MSIS_threshold2_1)
+xtabs(~mergedData$spthreshold2_vs_msis)
 
 
 
