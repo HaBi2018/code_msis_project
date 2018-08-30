@@ -32,7 +32,31 @@ p <- ggplot(data=long, mapping=aes(x=xValue,y=value))
 p <- p + geom_bar(stat="identity")
 p <- p + facet_wrap(~variable,ncol=1)
 p <- p + scale_x_continuous("Date",labels=breaks$label,breaks=breaks$xValue)
-p
+p <- p + theme_grey (base_size = 16)
+#p <- p + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+ggsave(filename = file.path(
+  SHARED_FOLDER_TODAY,
+  "figure_1.png"),
+  height=210,
+  width=297,
+  units="mm",
+  plot=p)
+
+
+p <- ggplot(data=long[year==2017], mapping=aes(x=xValue,y=value,group=variable,colour=variable))
+p <- p + geom_line()
+p <- p + scale_x_continuous("Date",labels=breaks$label,breaks=breaks$xValue)
+p <- p + theme_grey (base_size = 16)
+#p <- p + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+ggsave(filename = file.path(
+  SHARED_FOLDER_TODAY,
+  "figure_2.png"),
+  height=210,
+  width=297,
+  units="mm",
+  plot=p)
 
 
 
