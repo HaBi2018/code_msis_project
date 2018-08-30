@@ -170,7 +170,6 @@ setnames(vFull,"uke","week")
 vFull
 nrow(vFull)
 
-
 # Convert from old to new municipality numbers also in Vesuv
 # read in a "merging" dataset that says "which kommune goes to a different kommune"
 mergingData <- GenNorwayMunicipMerging()
@@ -195,7 +194,13 @@ setnames(vFull,"municipEnd","location")
 
 setcolorder(vFull, c("location", "year", "week","Antall", "vesuv_outbreak"))
 
-nrow(vFull)
+nrow(vFull) #nrow=537
+
+# Aggregate all "double" rows in Vesuv by municp, year, week, and sum Antall
+vFull <-vFull[,.(v_n=sum(Antall)),by=.(location, year,week, vesuv_outbreak)]
+nrow(vFull) #nrow=510
+
+
 
 #### DO I NEED TO AGGREAGTE THE ROWS WITH SAME MUNICIP,YEAR,WEEK BUT NOT ANTALL???
 
