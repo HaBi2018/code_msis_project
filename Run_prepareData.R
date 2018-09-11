@@ -202,8 +202,6 @@ nrow(vFull) #nrow=510
 
 
 
-#### DO I NEED TO AGGREAGTE THE ROWS WITH SAME MUNICIP,YEAR,WEEK BUT NOT ANTALL???
-
 
 #############################
 ##  MERGE ALL DATASETS     ##
@@ -279,14 +277,13 @@ fullDataSVM
 # delete columns
 fullDataSVM[, c("type","age","msis_last5yrAverage","num1","num2","num3","num4","num5"):=NULL] 
 
-setcolorder(fullDataSVM, c("location", "locationName", "year", "week", "pop", "n","Antall" ,"num", "s_threshold0", "s_threshold2", "s_threshold4", "s_threshold6","msis_threshold","vesuv_outbreak","msis_outbreak","s_status"))
-
-
 fullDataSVM[is.na(vesuv_outbreak),vesuv_outbreak:=0]
 
 # take a look at the data examples
 fullDataSVM[location=="municip0301" & week==3]
 fullDataSVM[location=="municip5054" & week==30]
+
+setcolorder(fullDataSVM, c("location", "locationName", "year", "week", "pop", "n","num","v_n","s_threshold0", "s_threshold2", "s_threshold4", "s_threshold6","msis_threshold","vesuv_outbreak","msis_outbreak","s_status"))
 
 fullDataSVM
 
@@ -295,6 +292,7 @@ fullDataSVM
 
 
 
+#openxlsx::write.xlsx(fullDataSVM,file=file.path(SHARED_FOLDER_TODAY,"fullDataSVM.xlsx"))
 
 
 
