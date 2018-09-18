@@ -9,6 +9,11 @@ results<-fullDataSVM[,.(
 
 openxlsx::write.xlsx(results,file=file.path(SHARED_FOLDER_TODAY,"signaler.xlsx"))
 
+results
+mean(results$numS)
+# mean(results$numM)  - calculate manually for year 2012-2017
+mean(results$numV)
+
 #Graph
 
 toPlot <- fullDataSVM[,.(
@@ -52,7 +57,7 @@ breaks[,label:=sprintf("%s-%s",year,week)]
 print(breaks)
 p <- ggplot(data=long[year==2017], mapping=aes(x=xValue,y=value,group=variable,colour=variable))
 p <- p + geom_line()
-p <- p + scale_x_continuous("Date",labels=breaks$label,breaks=breaks$xValue)
+p <- p + scale_x_continuous("Ukenummer",labels=breaks$label,breaks=breaks$xValue)
 p <- p + theme_grey (base_size = 16)
 p <- p + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
@@ -67,4 +72,40 @@ ggsave(filename = file.path(
 
 
 
+# Aggregate/count outbreak signals pr system, pr year, level 2 (SP=high)
 
+resultsSignals2<-fullDataSVM[,.(
+  numShigh=sum(s_status=="High"), 
+  numM=sum(msis_outbreak==T),
+  numV=sum(vesuv_outbreak==1)
+),by=.(year)]
+
+
+openxlsx::write.xlsx(resultsSignals2,file=file.path(SHARED_FOLDER_TODAY,"signaler_high.xlsx"))
+
+resultsSignals2
+mean(resultsSignals2$numShigh)
+
+
+
+# Aggregate registrations in SP and MSIS pr year
+
+resultsReg<-fullDataSVM[,.(
+  numSreg=sum(n), 
+  numMreg=sum(num)
+),by=.(year)]
+
+openxlsx::write.xlsx(resultsReg,file=file.path(SHARED_FOLDER_TODAY,"registrations_year.xlsx"))
+
+resultsReg
+
+mean(resultsReg$numSreg)
+mean(resultsReg$numMreg)
+
+
+
+# Look at big known outbreaks
+
+# Røros, municip5025, 2007, week 20
+
+fullDataSVM[location=="municip5025" & year==2007 & week==20]

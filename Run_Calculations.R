@@ -54,10 +54,33 @@ fullDataSVM
 
 #### MUNICIPALITY LEVEL  ####################################
 
+
+m <- mergedData[,
+                .(
+                  n=sum(n),
+                  num=sum(num)
+                ),by=.(
+                  location,
+                  year,
+                  week
+                )]
+
+plot(m$n~m$num)
+
+corr <- na.omit(m[num<80
+                  ,.(
+                    corr0=cor(n,num)
+                  ),by=.(location,year)])
+
+corr[,.(
+  corr0=mean(corr0,na.rm=T)
+),keyby=.(year)]
+
+
+
 mergedData[,num_w_future1:=shift(num,n=1L,type="lead"),by=.(location)]
 mergedData[,num_w_past1:=shift(num,n=1L,type="lag"),by=.(location)]
 
-# take a look at the correlations
 #cor(mergedData$n,mergedData$numx1)   GIVES ERRor - # supply both 'x' and 'y' or a matrix-like 'x'OR: 
 
 mergedData[,season:=sprintf("%s/%s",year-1,year)]
