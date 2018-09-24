@@ -1,7 +1,7 @@
 
 ## INVESTIGATION - KNOWN OUTBREAKS IN VESUV
 
-results<-list
+
 # Outbreak Ringerike, 2012, week 50
 fullDataSVM[location=="municip0605" & (year==2012 & week==50)]
 
