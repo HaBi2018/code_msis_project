@@ -1,6 +1,7 @@
 
 ## INVESTIGATION - KNOWN OUTBREAKS IN VESUV
 
+results<-list
 # Outbreak Ringerike, 2012, week 50
 fullDataSVM[location=="municip0605" & (year==2012 & week==50)]
 
@@ -38,6 +39,21 @@ fullDataSVM[location=="municip1924" & (year==2015 & week==9)]
 #Outbreak Målselv, 2015, week 9, lag +/- one week
 fullDataSVM[location=="municip1924" & (year==2015 & week==8)]
 fullDataSVM[location=="municip1924" & (year==2015 & week==10)]
+
+
+
+##  Sykdomspulsen      #####################################
+
+#Looking at outbreak signals in SP with high magnitude
+
+#fullDataSVM[s_status!="Normal" & n>(s_threshold6+15)]
+#fullDataSVM[s_status!="Normal" & n>550]
+
+results<-fullDataSVM[s_status!="Normal" & n>(s_threshold6+15)]
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"SP_outbreaks_Magnitude.xlsx"))
+
+
+
 
 
 
