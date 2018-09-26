@@ -101,8 +101,11 @@ nrow(fullData)
 ##  SYKDOMSPULSEN DATA     ##
 #############################
 
-data<-readRDS("C:/Users/Hanne/Dropbox/00 NMBU/Masteroppgave/results_shared/sykdomspulsen_project/resYearLineMunicip_gastro.RDS")
-
+if (.Platform$OS.type == "unix") {
+  data<-readRDS("data_raw/resYearLineMunicip_gastro.RDS")
+} else {
+  data<-readRDS("C:/Users/Hanne/Dropbox/00 NMBU/Masteroppgave/results_shared/sykdomspulsen_project/resYearLineMunicip_gastro.RDS")
+}
 # USE "ALL AGES" -- NO NEED FOR THE SEPARATE AGE GROUPS
 prepS <-data[age=="Totalt"]
 
@@ -154,7 +157,10 @@ vNull<-v[municip!="municipNA"]
 nrow(vNull)
 
 # Remove all registrations done from Helseinstitusjoner
-vInstitution <- vNull[Type!="Helseinstitusjon"]
+xtabs(~vNull$Type,addNA=T)
+#vInstitution <- vNull[Type!="Helseinstitusjon"]
+vInstitution <- vNull[Type!="Helseinstitusjon" | is.na(Type)]
+xtabs(~vInstitution$Type,addNA=T)
 
 nrow(vInstitution)
 
