@@ -42,18 +42,22 @@ fullDataSVM[location=="municip1924" & (year==2015 & week==10)]
 
 
 
-##  Sykdomspulsen      #####################################
+##  Strong outbreak signals in Sykdomspulsen      #####################################
 
 #Looking at outbreak signals in SP with high magnitude
 
 #fullDataSVM[s_status!="Normal" & n>(s_threshold6+15)]
 #fullDataSVM[s_status!="Normal" & n>550]
 
-results<-fullDataSVM[s_status!="Normal" & n>(s_threshold6+15)]
-openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"SP_outbreaks_Magnitude.xlsx"))
+#results<-fullDataSVM[s_status!="Normal" & n>(s_threshold6+15)]
+#openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"SP_outbreaks_Magnitude.xlsx"))
 
 
+results<-fullDataSVM[s_zscore>=6 & n>5] 
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"SP_outbreaks_zscore6.n5.xlsx"))
 
+results<-fullDataSVM[s_zscore>=7 & n>5] 
+openxlsx::write.xlsx(results, file=file.path(SHARED_FOLDER_TODAY,"SP_outbreaks_zscore7.n5.xlsx"))
 
 
 

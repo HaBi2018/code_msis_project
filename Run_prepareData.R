@@ -84,7 +84,9 @@ fullData[municip=="municip5054" & uke==30]
 
 # create the thresholds
 fullData[,threshold:=qpois(p=0.95,lambda=last5yrAverage)]
-fullData[,outbreak:=num>threshold]
+# fullData[,outbreak:=num>threshold]
+
+fullData[,outbreak:=(num>threshold)&(num>=2)]
 
 # HANNE: MAYBE SMART TO RENAME SOME VARIABLES???
 # THIS WAY WE CAN LABEL MSIS VARIABLES WITH THE PREFIX msis_
@@ -116,13 +118,14 @@ setnames(prepS,"threshold0", "s_threshold0")
 setnames(prepS,"threshold2", "s_threshold2")
 setnames(prepS,"threshold4", "s_threshold4")
 setnames(prepS,"threshold6", "s_threshold6")
+setnames(prepS,"zscore", "s_zscore")
 
 # REMOVE DATA FROM YEAR 2006 and 2018
 prepS2<-prepS[year!="2006"]
 prepS3<-prepS2[year!="2018"]
 
 # REMOVE COLUMNS NOT IN USE
-prepS3[, c("displayDay", "wkyr", "x", "consult", "pop", "HelligdagIndikator", "cumE1", "cumL1", "cumU1", "zscore", "failed", "age", "type", "county"):=NULL] 
+prepS3[, c("displayDay", "wkyr", "x", "consult", "pop", "HelligdagIndikator", "cumE1", "cumL1", "cumU1", "failed", "age", "type", "county"):=NULL] 
 
 setcolorder(prepS3, c("location", "locationName", "year", "week", "n", "s_threshold0", "s_threshold2", "s_threshold4", "s_threshold6", "s_status"))
 
@@ -289,7 +292,7 @@ fullDataSVM[is.na(vesuv_outbreak),vesuv_outbreak:=0]
 fullDataSVM[location=="municip0301" & week==3]
 fullDataSVM[location=="municip5054" & week==30]
 
-setcolorder(fullDataSVM, c("location", "locationName", "year", "week", "pop", "n","num","v_n","s_threshold0", "s_threshold2", "s_threshold4", "s_threshold6","msis_threshold","vesuv_outbreak","msis_outbreak","s_status"))
+setcolorder(fullDataSVM, c("location", "locationName", "year", "week", "pop", "n","num","v_n", "s_zscore", "s_threshold0", "s_threshold2", "s_threshold4", "s_threshold6","msis_threshold","vesuv_outbreak","msis_outbreak","s_status"))
 
 fullDataSVM
 

@@ -67,6 +67,17 @@ m <- mergedData[,
 
 plot(m$n~m$num)
 
+## Scatterplot - correlation N$n~N$num
+
+plot(m$n~m$num, main="Korrelasjon mellom antall tilfeller av mage-tarminfeksjon på kommunenivå",
+     pch=1, frame =T, cex.main=0.8, cex.lab=0.7,
+     xlab="Sykdomspulsen ", ylab="MSIS" )
+
+
+cor.test(N$n, N$num) 
+
+
+
 corr <- na.omit(m[num<80
                   ,.(
                     corr0=cor(n,num)
@@ -128,8 +139,11 @@ f <- mergedData[,
                   year,
                   week
                 )]
-
 plot(f$n~f$num)
+
+plot(f$n~f$num, main="Korrelasjon mellom antall tilfeller av mage-tarminfeksjon på fylkesnivå",
+     pch=1, frame =T, cex.main=0.8, cex.lab=0.7,
+     xlab="Sykdomspulsen ", ylab="MSIS" )
 
 corr <- na.omit(f[num<80
                   ,.(
@@ -153,7 +167,9 @@ N <- mergedData[,
                   week
                 )]
 
-plot(N$n~N$num)
+plot(N$n~N$num, main="Korrelasjon mellom antall tilfeller av mage-tarminfeksjon på nasjonalt nivå",
+     pch=1, frame =T, cex.main=0.8, cex.lab=0.7,
+     xlab="Sykdomspulsen ", ylab="MSIS" )
 
 corr <- na.omit(N[num<80
                   ,.(
@@ -167,11 +183,7 @@ corr[,.(
 
 hist(corr$corr0)
 
-
-
-
-
-
+cor.test(N$n, N$num) 
 
 
 
@@ -198,7 +210,10 @@ FP1 <- nrow(mergedData[msis_outbreak==FALSE & s_status!="Normal"])
 # FALSE NEGATIVE= 
 FN1 <- nrow(mergedData[msis_outbreak==TRUE & s_status=="Normal"]) 
 
-
+TP1
+TN1
+FP1
+FN1
 
 # Level 2:  No outbreak=normal+medium / Outbreak=high
 # TRUE POSITIVE= 
@@ -209,6 +224,12 @@ TN2 <- nrow(mergedData[msis_outbreak==FALSE & s_status!="High"])
 FP2 <- nrow(mergedData[msis_outbreak==FALSE & s_status=="High"])
 # FALSE NEGATIVE= 
 FN2 <- nrow(mergedData[msis_outbreak==TRUE & s_status!="High"])
+
+TP2
+TN2
+FP2
+FN2
+
 
 
 # CALCULATE:
@@ -300,6 +321,10 @@ FP1 <- nrow(dataPop5000[msis_outbreak==FALSE & s_status!="Normal"])
 # FALSE NEGATIVE= 
 FN1 <- nrow(dataPop5000[msis_outbreak==TRUE & s_status=="Normal"]) 
 
+TP1
+TN1
+FP1
+FN1
 
 # Level 2:  No outbreak=normal+medium / Outbreak=high
 # TRUE POSITIVE= 
@@ -311,6 +336,10 @@ FP2 <- nrow(dataPop5000[msis_outbreak==FALSE & s_status=="High"])
 # FALSE NEGATIVE= 
 FN2 <- nrow(dataPop5000[msis_outbreak==TRUE & s_status!="High"])
 
+TP2
+TN2
+FP2
+FN2
 
 results <- list()
 # LVL1
@@ -375,6 +404,11 @@ FP1 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status!="Normal"])
 # FALSE NEGATIVE= 
 FN1 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status=="Normal"]) 
 
+TP1
+TN1
+FP1
+FN1
+
 
 # Level 2:  No outbreak=normal+medium / Outbreak=high
 # TRUE POSITIVE= 
@@ -386,6 +420,10 @@ FP2 <- nrow(dataPop50000[msis_outbreak==FALSE & s_status=="High"])
 # FALSE NEGATIVE= 
 FN2 <- nrow(dataPop50000[msis_outbreak==TRUE & s_status!="High"])
 
+TP2
+TN2
+FP2
+FN2
 
 # CALCULATE:
 # PPV = TP/TP+FP
@@ -456,6 +494,11 @@ FP1 <- nrow(dataPop10000[msis_outbreak==FALSE & s_status!="Normal"])
 # FALSE NEGATIVE= 
 FN1 <- nrow(dataPop10000[msis_outbreak==TRUE & s_status=="Normal"]) 
 
+TP1
+TN1
+FP1
+FN1
+
 
 # Level 2:  No outbreak=normal+medium / Outbreak=high
 # TRUE POSITIVE= 
@@ -466,6 +509,11 @@ TN2 <- nrow(dataPop10000[msis_outbreak==FALSE & s_status!="High"])
 FP2 <- nrow(dataPop10000[msis_outbreak==FALSE & s_status=="High"])
 # FALSE NEGATIVE= 
 FN2 <- nrow(dataPop10000[msis_outbreak==TRUE & s_status!="High"])
+
+TP2
+TN2
+FP2
+FN2
 
 
 # CALCULATE:
@@ -536,6 +584,10 @@ FP1 <- nrow(fullDataSVM[vesuv_outbreak==0 & s_status!="Normal"])
 # FALSE NEGATIVE= 
 FN1 <- nrow(fullDataSVM[vesuv_outbreak==1 & s_status=="Normal"]) 
 
+TP1
+TN1
+FP1
+FN1
 
 # Level 2:  No outbreak=normal+medium / Outbreak=high
 # TRUE POSITIVE= 
@@ -546,6 +598,11 @@ TN2 <- nrow(fullDataSVM[vesuv_outbreak==0 & s_status!="High"])
 FP2 <- nrow(fullDataSVM[vesuv_outbreak==0 & s_status=="High"])
 # FALSE NEGATIVE= 
 FN2 <- nrow(fullDataSVM[vesuv_outbreak==1 & s_status!="High"])
+
+TP2
+TN2
+FP2
+FN2
 
 
 # CALCULATE:
@@ -613,6 +670,10 @@ FP1 <- nrow(fullDataSVM5000[vesuv_outbreak==0 & s_status!="Normal"])
 # FALSE NEGATIVE= 
 FN1 <- nrow(fullDataSVM5000[vesuv_outbreak==1 & s_status=="Normal"]) 
 
+TP1
+TN1
+FP1
+FN1
 
 # Level 2:  No outbreak=normal+medium / Outbreak=high
 # TRUE POSITIVE= 
@@ -623,6 +684,11 @@ TN2 <- nrow(fullDataSVM5000[vesuv_outbreak==0 & s_status!="High"])
 FP2 <- nrow(fullDataSVM5000[vesuv_outbreak==0 & s_status=="High"])
 # FALSE NEGATIVE= 
 FN2 <- nrow(fullDataSVM5000[vesuv_outbreak==1 & s_status!="High"])
+
+TP2
+TN2
+FP2
+FN2
 
 
 results <- list()
@@ -682,6 +748,10 @@ FP1 <- nrow(fullDataSVM50000[vesuv_outbreak==0 & s_status!="Normal"])
 # FALSE NEGATIVE= 
 FN1 <- nrow(fullDataSVM50000[vesuv_outbreak==1 & s_status=="Normal"]) 
 
+TP1
+TN1
+FP1
+FN1
 
 # Level 2:  No outbreak=normal+medium / Outbreak=high
 # TRUE POSITIVE= 
@@ -693,6 +763,10 @@ FP2 <- nrow(fullDataSVM50000[vesuv_outbreak==0 & s_status=="High"])
 # FALSE NEGATIVE= 
 FN2 <- nrow(fullDataSVM50000[vesuv_outbreak==1 & s_status!="High"])
 
+TP2
+TN2
+FP2
+FN2
 
 
 # CALCULATE:
@@ -759,6 +833,10 @@ FP1 <- nrow(fullData1SVM0000[vesuv_outbreak==0 & s_status!="Normal"])
 # FALSE NEGATIVE= 
 FN1 <- nrow(fullDataSVM10000[vesuv_outbreak==1 & s_status=="Normal"]) 
 
+TP1
+TN1
+FP1
+FN1
 
 # Level 2:  No outbreak=normal+medium / Outbreak=high
 # TRUE POSITIVE= 
@@ -769,6 +847,11 @@ TN2 <- nrow(fullDataSVM10000[vesuv_outbreak==0 & s_status!="High"])
 FP2 <- nrow(fullDataSVM10000[vesuv_outbreak==0 & s_status=="High"])
 # FALSE NEGATIVE= 
 FN2 <- nrow(fullDataSVM10000[vesuv_outbreak==1 & s_status!="High"])
+
+TP2
+TN2
+FP2
+FN2
 
 
 # CALCULATE:
@@ -837,6 +920,10 @@ FP1 <- nrow(fullDataSVM[vesuv_outbreak==0 & msis_outbreak!="FALSE"])
 # FALSE NEGATIVE= 
 FN1 <- nrow(fullDataSVM[vesuv_outbreak==1 & msis_outbreak=="FALSE"]) 
 
+TP1
+TN1
+FP1
+FN1
 
 # CALCULATE:
 # PPV = TP/TP+FP
@@ -1168,7 +1255,7 @@ results <- long[,.(
 
 na.omit(results)
 
-openxlsx::write.xlsx(na.omit(results), file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_vs_vesuv_lags.xlsx"))
+openxlsx::write.xlsx(na.omit(results), file=file.path(SHARED_FOLDER_TODAY,"sykdomspulsen_vs_vesuv_thresholds.xlsx"))
 
 xtabs(~fullDataSVM$SP_vs_VESUV_threshold2_1)
 
